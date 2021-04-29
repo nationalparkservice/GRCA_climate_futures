@@ -11,15 +11,15 @@ rm(list = ls())
 
 # -------------- Input site information -------------------------------------- #
 
-SiteID = "ELMA"
-state <- "New Mexico"
+SiteID = "CARE"
+state <- "Utah"
 
 # --------------- Input local folder information ----------------------------- #
 
 # When this document has finished running, the files will be copied to a local directory and all newly created files (e.g., figures) will be deleted from the repo
 
-project_root_dir <- 'C:/Users/adillon/Documents/Repos/CCRP_Climate_Futures_v1.0' # local directory where your repo is stored
-local_rss_dir <- 'C:/Users/adillon/Documents/RSS/ELMA/' # local directory where you want this repo copied. Should be something like 'C:/Users/adillon/Documents/RSS/CONG'
+project_root_dir <- 'C:/Users/msears/Documents/Repos/CCRP_Climate_Futures_v1.0' # local directory where your repo is stored
+local_rss_dir <- 'C:/Users/msears/Documents/RSS/CARE_update/' # local directory where you want this repo copied. Should be something like 'C:/Users/adillon/Documents/RSS/CONG'
 
 # -------------- Input information for Climate Futures analyses (MACA) ------- #
 
@@ -53,15 +53,15 @@ QuantileHigh = 0.95
 
 # -------------- Input information for Water Balance model ------------------- #
 
-WB_GCMs = c("MRI-CGCM3.rcp45","HadGEM2-ES365.rcp85") # Specific models need to be selected to run the Water Balance scripts
+WB_GCMs = c("CSIRO-Mk3-6-0.rcp45","HadGEM2-ES365.rcp85") # Specific models need to be selected to run the Water Balance scripts
 
 col<- c("darkgray","#9A9EE5","#E10720")  # WarmWet/HotDry
 #col<- c("darkgray","#F3D3CB","#12045C")  # HotWet/WarmDry
 
 # The following files are inputs into this script. Change as necessary. 
-#inputs <- c(paste0(site, "_lat_long_PRISM_PptTminTmax_IntermediateFiles.RData"), 
-#            paste0(site, "_init_parsed.RData"), 
-#            "GridMet.csv")
+inputs <- c(paste0(site, "_lat_long_PRISM_PptTminTmax_IntermediateFiles.RData"), 
+            paste0(site, "_init_parsed.RData"), 
+            "GridMet.csv")
 
 # The following needs to be inputted if the park centroid will not be used to select the MACA grid cell for the water balance model:
 
