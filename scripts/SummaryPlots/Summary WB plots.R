@@ -25,6 +25,10 @@ OutDir = './figures/summary-plots'
 #Select GCMs - Include RCP
 GCMs = unique(ALL_FUTURE$GCM[which(ALL_FUTURE$CF %in% CF.sub)]) 
 
+CF.sub = c("Historical", "Warm Wet", "Hot Dry") #CFs using
+col<- c("darkgray","#E10720", "#9A9EE5")  # WarmWet/HotDry
+
+
 ############################################################ END USER INPUTS ###################################################################
 
 
