@@ -89,7 +89,6 @@ for (j in 1:length(WB_GCMs)){
     DailyWB$SiteID = SiteID
     DailyWB$doy <- yday(DailyWB$Date)
     DailyWB$daylength = get_daylength(DailyWB$Date, Lat)
-    DailyWB$F = get_freeze(DailyWB$tmean_C)
     DailyWB$jtemp = as.numeric(get_jtemp(Lon, Lat))
     DailyWB$F = get_freeze(DailyWB$jtemp, DailyWB$tmean_C)
     DailyWB$RAIN = get_rain(DailyWB$ppt_mm, DailyWB$F)
