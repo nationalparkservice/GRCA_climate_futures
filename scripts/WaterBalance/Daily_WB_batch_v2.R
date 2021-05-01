@@ -125,6 +125,7 @@ WBData<-do.call(rbind,AllDailyWB)
 
 ######################################################### AGGREGATE OUTPUTS TO MONTLY/ANNUAL ################################################################
 
+
 WBData$yrmon = strftime(WBData$Date, "%Y%m")
 WBData$year = strftime(WBData$Date, "%Y")
 
@@ -334,5 +335,3 @@ ggplot(data, aes(x=mon, y=deficit, group=CF, colour = CF)) +
   scale_shape_manual(name="",values = c(21,22))
 
 ggsave("Monthly Deficit.png", path = OutDir, width = 15, height = 9)
-
-
