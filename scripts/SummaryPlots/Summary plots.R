@@ -22,9 +22,8 @@ Future_all<-merge(ALL_FUTURE,CF_GCM,by="GCM")
 BC.min = 1979 #Bias correction range
 BC.max = 2018 # GridMET now goes through 2018
 
-CF.sub = c("Historical", "Warm Wet", "Hot Dry") #CFs using
-col<- c("darkgray","#E10720", "#9A9EE5")  # WarmWet/HotDry
-
+CF.sub = c("Historical", "Hot Wet", "Warm Dry") #CFs using
+col<- c("darkgray","#12045C", "#F3D3CB")  # WarmWet/HotDry
 ############################################ Format Gridmet data ####################################################
 head(grid)
 grid$tmean<-(grid$tmax+grid$tmin)/2
@@ -119,6 +118,7 @@ rollLen = 10
 PRISM.BC$Tmean.roll10 <- rollmean(PRISM.BC$Tavg.mean, rollLen,fill=NA)
 PRISM.BC$Precip.roll10 <- rollmean(PRISM.BC$Precip.mean, rollLen,fill=NA)
 yrAvgs.sub<-merge(yrAvgs.sub,PRISM.BC[,c("year","Tmean.roll10","Precip.roll10")],by="year",all=TRUE)
+
 
 
 # Tmean
