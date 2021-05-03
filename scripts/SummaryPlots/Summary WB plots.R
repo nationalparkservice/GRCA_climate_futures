@@ -23,11 +23,11 @@ DateFormat = "%m/%d/%Y"
 OutDir = './figures/summary-plots'
 
 #Select GCMs - Include RCP
-GCMs = unique(ALL_FUTURE$GCM[which(ALL_FUTURE$CF %in% CF.sub)]) 
+GCMs = unique(ALL_FUTURE$GCM[which(ALL_FUTURE$CF %in% CF.sub)])
 
-CF.sub = c("Historical", "Warm Wet", "Hot Dry") #CFs using
-col<- c("darkgray","#E10720", "#9A9EE5")  # WarmWet/HotDry
 
+CF.sub = c("Historical", "Hot Wet", "Warm Dry") #CFs using
+col<- c("darkgray","#12045C", "#F3D3CB")  # WarmWet/HotDry
 
 ############################################################ END USER INPUTS ###################################################################
 
