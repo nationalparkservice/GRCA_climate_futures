@@ -26,8 +26,8 @@ OutDir = './figures/summary-plots'
 GCMs = unique(ALL_FUTURE$GCM[which(ALL_FUTURE$CF %in% CF.sub)])
 
 
-CF.sub = c("Historical", "Hot Wet", "Warm Dry") #CFs using
-col<- c("darkgray","#12045C", "#F3D3CB")  # WarmWet/HotDry
+CF.sub = c("Historical", "Warm Wet", "Hot Dry") #CFs using
+col<- c("darkgray","#E10720","#9A9EE5")  # WarmWet/HotDry
 
 ############################################################ END USER INPUTS ###################################################################
 
@@ -53,9 +53,11 @@ PRISM.tmean = data.frame(Date = TmaxMeans$Date, TavgCustom = (TmaxMeans$TmaxF + 
 PRISM.tmean$year = strftime(PRISM.tmean$Date, "%Y")
 PRISM.tmean$month = strftime(PRISM.tmean$Date, "%m")
 
+PRISM.yrAvgs <- subset(PRISM.yrAvgs, year > 1895)
 PRISM.Avgs = merge(PRISM.tmean,PptMeans,by=c("year","month"))
 PRISM.Avgs$year = as.numeric(as.character(PRISM.Avgs$year))
 PRISM.Avgs$year = as.numeric(as.character(PRISM.Avgs$year))
+PRISM.Avgs <- subset(PRISM.Avgs, year > 1895)
 
 ########################################### Bias correction ########################################################
 Grid.tmean = mean(grid.yrMAvgs$tmean[which(grid.yrMAvgs$year>=BC.min & grid.yrMAvgs$year<=BC.max)])
@@ -252,6 +254,8 @@ PlotTheme = theme(axis.text=element_text(size=20),    #Text size for axis tick m
 PlotWidth = 15
 PlotHeight = 9
 
+yrAvgs.sub <- subset(yrAvgs.sub, year > 1895)
+
 # Deficit
 ggplot(yrAvgs.sub, aes(x=as.numeric(as.character(year)), y=D.mean, col=CF, fill=CF)) + 
   geom_rect(xmin=2025, xmax=2055, ymin=0, ymax=80, alpha=0.1, fill="lightgray", col="lightgray") +
@@ -262,6 +266,6 @@ ggplot(yrAvgs.sub, aes(x=as.numeric(as.character(year)), y=D.mean, col=CF, fill=
   labs(x="Year", y="Mean annual climatic water deficit (in/year)") +
   scale_color_manual(name="Climate Future",values=col) +
   scale_fill_manual(name="Climate Future",values=col) + PlotTheme
-ggsave(paste(PARK,"-Deficit.png",sep=""), path = './figures/summary-plots', height=PlotHeight, width=PlotWidth)
+ggsave(paste("CARE-Deficit.png",sep=""), path = './figures/summary-plots', height=PlotHeight, width=PlotWidth)
 
 
