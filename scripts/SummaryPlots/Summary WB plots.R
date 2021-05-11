@@ -266,6 +266,6 @@ ggplot(yrAvgs.sub, aes(x=as.numeric(as.character(year)), y=D.mean, col=CF, fill=
   labs(x="Year", y="Mean annual climatic water deficit (in/year)") +
   scale_color_manual(name="Climate Future",values=col) +
   scale_fill_manual(name="Climate Future",values=col) + PlotTheme
-ggsave(paste("CARE-Deficit.png",sep=""), path = './figures/summary-plots', height=PlotHeight, width=PlotWidth)
+ggsave(paste(PARK,"-Deficit.png",sep=""), path = './figures/summary-plots', height=PlotHeight, width=PlotWidth)
 
 
