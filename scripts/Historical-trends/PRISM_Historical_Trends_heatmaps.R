@@ -1,17 +1,15 @@
-##  RSS Historical-trends plots vxxx.R
+library(ggplot2)
+# Historical heatmaps from PRISM data
+rm(list=ls())
 
 #################################################
 
 # Create output directories
 
-file <- #change to Kaibab prism
-  list.files(path = './data/park-specific/input', pattern = 'IntermediateFiles.RData', full.names = TRUE) # will load all .RData files within directory
+data.dir = "C:/Users/achildress/DOI/NPS-NRSS-CCRP-FC Science Adaptation - Documents/General/Climate future data/GRCA/"
+file = list.files(path = data.dir, pattern = 'IntermediateFiles.RData', full.names = TRUE) # will load all .RData files within directory
 load(file)
 
-
-
-doP1 <- "YES"  # Should a separate regression be calculated for the reference period (default 1900-1970)? 
-doP2 <- "YES"  # Should a separate regression be calculate for the period after the reference period (default 1971-present)? 
 beginRefYr = 1900
 endRefYr = 1970
 
@@ -41,6 +39,8 @@ theme_set(PlotTheme)
 TitleSize = theme_get()$plot.title$size  ##Needed for cowplot layouts
 
 #################   End of Initials  ##########################  
+
+
 
 DoYrMon <- function(YrMon){    #  YrMon = char vector of year mon as 189501.  Return vector of decimal year like 1895.42
   year <- as.numeric(substr(YrMon, 1,4))
