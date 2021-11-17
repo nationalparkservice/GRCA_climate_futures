@@ -8,7 +8,7 @@ library(stars);library(dplyr);library(ggplot2);library(ggthemes);library(viridis
 
 var = "Annual.Temp"
 long.title = "average annual temperature"
-scale = "viridis"
+#scale = "viridis"
 
 GCMs <- c("Average","CGCM3.rcp85","CHEM.rcp85")
 CFs <- c("Historical","Climate Future 1", "Climate Future 2")
@@ -40,7 +40,6 @@ tasmean_historical_CHEM_crop = st_crop(tasmean_historical_CHEM, grca, crop = TRU
 
 tasmean_historical_CFCM3 = st_transform(tasmean_historical_CFCM3, st_crs(grca))
 tasmean_historical_CFCM3_crop = st_crop(tasmean_historical_CFCM3, grca, crop = TRUE)
-plot(tasmean_historical_CFCM3_crop)
 
 tasmean_20402069_rcp85_CHEM = st_transform(tasmean_20402069_rcp85_CHEM, st_crs(grca))
 tasmean_20402069_rcp85_CHEM_crop = st_crop(tasmean_20402069_rcp85_CHEM, grca, crop = TRUE)
@@ -53,7 +52,7 @@ tasmean_20402069_rcp85_CGCM3_crop = st_crop(tasmean_20402069_rcp85_CGCM3, grca, 
 tasmean_historical_CHEM_crop
 tasmean_historical_CFCM3_crop
 
-temp_hist_mean_stars <- (tasmean_historical_CHEM_crop / tasmean_historical_CFCM3_crop) / 2
+temp_hist_mean_stars <- ((tasmean_historical_CHEM_crop + tasmean_historical_CFCM3_crop) / 2)
 
 #
 #hist_cf1_temp <- raster("D:\\GRCA\\MACA_Summaries\\tif\\macav2metdata_tasmean_ANN_19712000_historical_MRI-CGCM3.tif")
