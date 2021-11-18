@@ -11,8 +11,8 @@ data.dir <- "C:/Users/achildress/Documents/NOAA-data/gridmet/"
 #Set working directory where files will download
 Remove_files = "Y"
 
-Lat <- 36.106
-Lon <- -112.095
+Lat <- 35.9736
+Lon <- -112.1266
 
 
 var = c("pr","tmmx","tmmn")
@@ -61,10 +61,12 @@ for(i in 1:length(files)){
 #set names so match output from other scripts -- need to change if alter variables
 names(GridMet)<-c("Date","precip","tmax","tmin")
 
-write.csv(GridMet,"GridMet.csv",row.names=F)
 
 # Remove saved climate files
 if(Remove_files == "Y") {
   do.call(file.remove, list(list.files(data.dir, full.names = TRUE)))
   print("Files removed")
 } else {print("Files remain")}
+
+
+write.csv(GridMet,paste0(data.dir,"GridMet.csv"),row.names=F)
