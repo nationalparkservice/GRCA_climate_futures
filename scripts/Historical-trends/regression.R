@@ -87,12 +87,12 @@ for(i in 1:length(tables)) {
   df <- tables[[i]]
   coordinates(df) = ~Lon+Lat
   proj4string(df) = "+proj=longlat +datum=WGS84 +no_defs " #same proj4string used in NPS_boundary_centroids.shp
-  df = spTransform(df, CRSobj = "+init=epsg:5070") #reproj sp obj
+  df = spTransform(df, CRSobj = "+init=epsg:4326") #reproj sp obj
   y = data.frame(df@coords)
   y$var<-df@data
   df = as.matrix(y)
   e = extent(df[,1:2])
-  r =  raster(e, ncol=85, nrow=71)
+  r =  raster(e) # this needs to be updated for the GGCL. Not sure where these numbers come from. 
   x = rasterize(df[, 1:2], r, df[,3])
   rasters[[i]] <- x
 }
@@ -110,17 +110,18 @@ index <- rep(1:96, each = 12)
 
 st_mean <- stackApply(st, indices = c(rep(1:96, each = 12)), fun = mean, na.rm = TRUE) # get annual mean first
 plot(st_mean[[1]])
-writeRaster(st_mean, "./output/rasters/tave/st_mean", format = "CDF")
+writeRaster(st_mean, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/rasters", format = "CDF")
 
 st_fahr <- calc(st_mean, fun = function(x){x*9/5 + 32}) # then convert to Fahrenheit
 plot(st_fahr)
-writeRaster(st_fahr, "./output/rasters/tave/st_fahr", format = "CDF")
+writeRaster(st_fahr, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/rasters", format = "CDF")
 
 # Calculate overall mean: output = single raster with overall mean values
 
 ras_mean <- calc(st_fahr, fun = mean)
 plot(ras_mean)
-writeRaster(ras_mean, "./output/rasters/tave/ras_mean", format = "CDF")
+plot(Sp_ggcl, add = TRUE)
+writeRaster(ras_mean, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/rasters", format = "CDF")
 
 ##################################
 
@@ -144,6 +145,7 @@ writeRaster(st_in, "./output/rasters/prcp/st_in", format = "CDF")
 
  ras_mean <- calc(st_in, fun = mean)
  plot(ras_mean)
+ 
  writeRaster(ras_mean, "./output/rasters/prcp/ras_mean", format = "CDF")
  
 #######################
