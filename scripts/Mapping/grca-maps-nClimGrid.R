@@ -20,8 +20,8 @@ site = "GRCA"
 aa <- CRS('+init=EPSG:5070') # Conus Albers
 latlong = CRS('+init=EPSG:4326') # Lat/Long
 
-PlotIn <- "C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/rasters"
-PlotOut <- "C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/maps"
+PlotIn <- "C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/rasters/"
+PlotOut <- "C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/maps/"
 
 # NPS Boundary
 
@@ -41,9 +41,11 @@ Sp_ggcl<-spTransform(Sp_ggcl,CRSobj = "+init=epsg:5070")
 
 # topo <- stack('./data/spatial-data/HYP_HR_SR_W/HYP_HR_SR_W/HYP_HR_SR_W.tif') # read in as stack so can see RBG layers
 topo <- stack("C:\\Users\\gknowlton\\DOI\\Climate Change Scenario Planning - Documents\\WRST RSS\\3.0 Climate futures development (Summer 2021)\\Data\\Boundary_shapefiles\\HYP_HR_SR_W\\HYP_HR_SR_W.tif") # read in as stack so can see RBG layers
-ext <- extent(GGCL) # extent defined by lat/long
+ext2 <- extent(GGCL)+0.4 # extent defined by lat/long
+ext <- extent(GGCL)
 
-az <- crop(topo, ext)
+
+az <- crop(topo, ext2)
 plotRGB(az)
 
 az2 <- projectRaster(az, crs = aa)
@@ -65,15 +67,16 @@ plot(Sp_ggcl, add = TRUE)
 # Precipitation
 ###################################
 # Mean
-r <- raster("C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\rasters\\prcp\\ras_mean.nc")
+r <- raster("C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\rasters\\prcp\\ras_mean.tif")
+crs(r) <- latlong
+r<-projectRaster(r, crs=crs(aa))
+crs(Sp_ggcl) <- aa
 r<-mask(r,Sp_ggcl)
 plot(r)
 
-crs(r) <- aa
-
 # Precip mean
 col=hcl.colors(n = 9, palette = "Oslo", alpha = 0.7)[3:9]
-barplot(1/sqrt(1:length(col)), col = col)
+#barplot(1/sqrt(1:length(col)), col = col)
 
 png("C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/maps/Precip_mean.png")
 
@@ -88,18 +91,18 @@ dev.off()
 ########################
 # Delta
 
-r <- raster("C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\rasters\\prcp\\precip_delta.tif")
+r <- raster("C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\rasters\\prcp\\prcp_delta.tif")
+crs(r) <- latlong
+r<-projectRaster(r, crs=crs(aa))
 r<-mask(r,Sp_ggcl)
 plot(r)
-
-crs(r) <- aa
 
 # Precip delta
 col=hcl.colors(n = 7, palette = "Blue-Yellow", alpha = 0.7, rev=TRUE)
 barplot(1/sqrt(1:length(col)), col = col)
 
 #png(paste(PlotOut,'Precip_delta.png',sep=""))
-png("C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/maps/Precip_delta.png")
+png("C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/maps/prcp_delta.png")
 
 
 plotRGB(az2) 
@@ -114,18 +117,18 @@ dev.off()
 # Tmax
 ###################################
 # Mean
-r <- raster("C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/rasters/tmax/ras_mean.nc")
+r <- raster("C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/rasters/tmax/ras_mean.tif")
 plot(r)
+crs(r) <- latlong
+r<-projectRaster(r, crs=crs(aa))
 r<-mask(r,Sp_ggcl)
 plot(r)
-
-crs(r) <- aa
 
 # Temp mean
 col=hcl.colors(n = 7, palette = "Viridis", alpha = 0.5)
 barplot(1/sqrt(1:length(col)), col = col)
 
-png(paste(PlotOut,'Tmax_mean.png',sep=""))
+#png(paste(PlotOut,'Tmax_mean.png',sep=""))
 png("C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/maps/tmax_mean.png")
 
 plotRGB(az2) 
@@ -139,21 +142,22 @@ dev.off()
 ########################
 # Delta
 
-r <- raster(paste(PlotIn,'tmax_delta.tif',sep=""))
+r <- raster(paste(PlotIn,'/tmax/tmax_delta.tif',sep=""))
+crs(r) <- latlong
+r<-projectRaster(r, crs=crs(aa))
 r<-mask(r,Sp_park)
 plot(r)
 
-crs(r) <- aa
 
 # Temp delta
 col=hcl.colors(n = 7, palette = "Lajolla", alpha = 0.5)
 barplot(1/sqrt(1:length(col)), col = col)
 
-png(paste(PlotOut,'Tmax_delta.png',sep=""))
+png(paste(PlotOut,'/Tmax_delta.png',sep=""))
 
-plotRGB(ak2) 
+plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
-plot(Sp_park, add = TRUE) + 
+plot(Sp_ggcl, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text = expression("Temperature ("*~degree*F*")"), line = 1)) 
 
 dev.off()
@@ -163,21 +167,21 @@ dev.off()
 # Tmin
 ###################################
 # Mean
-r <- raster("C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/rasters/tmin/ras_mean.nc")
-r<-mask(r,Sp_park)
+r <- raster("C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/rasters/tmin/ras_mean.tif")
+crs(r) <- latlong
+r<-projectRaster(r, crs=crs(aa))
+r<-mask(r,Sp_ggcl)
 plot(r)
-
-crs(r) <- aa
 
 # Temp mean
 col=hcl.colors(n = 7, palette = "Viridis", alpha = 0.5)
 barplot(1/sqrt(1:length(col)), col = col)
 
-png(paste(PlotOut,'Tmin_mean.png',sep=""))
+png(paste(PlotOut,'/Tmin_mean.png',sep=""))
 
-plotRGB(ak2) 
+plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
-plot(Sp_park, add = TRUE) + 
+plot(Sp_ggcl, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text =  expression("Temperature ("*~degree*F*")"), line = 1)) 
 
 dev.off()
@@ -186,21 +190,22 @@ dev.off()
 ########################
 # Delta
 
-r <- raster(paste(PlotIn,'tmin_delta.tif',sep=""))
-r<-mask(r,Sp_park)
+r <- raster(paste(PlotIn,'/tmin/tmin_delta.tif',sep=""))
+crs(r) <- latlong
+r<-projectRaster(r, crs=crs(aa))
+r<-mask(r,Sp_ggcl)
 plot(r)
 
-crs(r) <- aa
 
 # Temp delta
 col=hcl.colors(n = 7, palette = "Lajolla", alpha = 0.5)
 barplot(1/sqrt(1:length(col)), col = col)
 
-png(paste(PlotOut,'Tmin_delta.png',sep=""))
+png(paste(PlotOut,'/Tmin_delta.png',sep=""))
 
-plotRGB(ak2) 
+plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
-plot(Sp_park, add = TRUE) + 
+plot(Sp_ggcl, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text = expression("Temperature ("*~degree*F*")"), line = 1)) 
 
 dev.off()
@@ -210,21 +215,21 @@ dev.off()
 # Tmean
 ###################################
 # Mean
-r <- raster(paste(PlotIn,'Tmean_val.tif',sep=""))
-r<-mask(r,Sp_park)
+r <- raster(paste(PlotIn,'/tave/ras_mean.tif',sep=""))
+crs(r) <- latlong
+r<-projectRaster(r, crs=crs(aa))
+r<-mask(r,Sp_ggcl)
 plot(r)
-
-crs(r) <- aa
 
 # Temp mean
 col=hcl.colors(n = 7, palette = "Viridis", alpha = 0.5)
 barplot(1/sqrt(1:length(col)), col = col)
 
-png(paste(PlotOut,'Tmean_mean.png',sep=""))
+png(paste(PlotOut,'/Tave_mean.png',sep=""))
 
-plotRGB(ak2) 
+plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
-plot(Sp_park, add = TRUE) + 
+plot(Sp_ggcl, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text =  expression("Temperature ("*~degree*F*")"), line = 1)) 
 
 dev.off()
@@ -233,21 +238,22 @@ dev.off()
 ########################
 # Delta
 
-r <- raster(paste(PlotIn,'tmean_delta.tif',sep=""))
-r<-mask(r,Sp_park)
+r <- raster(paste(PlotIn,'/tave/tave_delta.tif',sep=""))
+crs(r) <- latlong
+r<-projectRaster(r, crs=crs(aa))
+r<-mask(r,Sp_ggcl)
 plot(r)
 
-crs(r) <- aa
 
 # Temp delta
 col=hcl.colors(n = 7, palette = "Lajolla", alpha = 0.5)
 barplot(1/sqrt(1:length(col)), col = col)
 
-png(paste(PlotOut,'Tmean_delta.png',sep=""))
+png(paste(PlotOut,'/Tave_delta.png',sep=""))
 
-plotRGB(ak2) 
+plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
-plot(Sp_park, add = TRUE) + 
-  plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text = expression("Temperature ("*~degree*F*")"), line = 1)) 
+plot(Sp_ggcl, add = TRUE) + 
+  plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(t = expression("Temperature ("*~degree*F*")"), line = 1)) 
 
 dev.off()
