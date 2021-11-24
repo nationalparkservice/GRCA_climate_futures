@@ -27,7 +27,7 @@ pnt.list<-list.files(path=data.dir, pattern=".prcp.conus") #list all files by va
 
 var <- "prcp"
 
-plotDir <- "C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/tmin/" # AKD PlotDir
+plotDir <- "C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\regression plots\\" # AKD PlotDir
 
 
 # ---   INITIALS  ---------------------------------------- #
@@ -244,10 +244,10 @@ m_temp_park <- mask(st_fahr,Sp_park)
 # ---  PLOTS ----------------------------------------- #      
 
 # read in csvs
-prcp<-read.csv("./output/csvs/nClimGrid/prcp.csv")
-tmax<-read.csv("./output/csvs/nClimGrid/tmax.csv")
-tmin<-read.csv("./output/csvs/nClimGrid/tmin.csv")
-tave<-read.csv("./output/csvs/nClimGrid/tave.csv")
+prcp<-read.csv("C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\csvs\\prcp.csv")
+tmax<-read.csv("C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\csvs\\tmax.csv")
+tmin<-read.csv("C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\csvs\\tmin.csv")
+tave<-read.csv("C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\csvs\\tave.csv")
 
 # -- TIME SERIES FROM PRISM SCRIPTS
 beginRefYr = 1925
