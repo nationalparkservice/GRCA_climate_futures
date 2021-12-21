@@ -5,12 +5,12 @@ library(plyr)
 rm(list=ls())
 
 #load daily data
-setwd("C:/Users/achildress/DOI/NPS-CCRP-FC Science Adaptation - Documents/General/RSS Stuff/Parks/MACA/Figs projections/")
-load("MACA_37.19758_-86.130895_Final_Environment.RData")
+#setwd("C:/Users/achildress/DOI/NPS-CCRP-FC Science Adaptation - Documents/General/RSS Stuff/Parks/MACA/Figs projections/")
+load("C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\HOCU\\RCF\\data\\park-specific\\output\\HOCU_39.2793938_-83.13519508_Final_Environment.RData")
 rm(list=setdiff(ls(), c("Baseline_all","Future_all","SiteID")))
 
 #Use same GCMs/CFs used for drought / WB data
-GCMs = c("CNRM-CM5.rcp45","HadGEM2-ES365.rcp85") 
+GCMs = c("MRI-CGCM3.rcp45","HadGEM2-ES365.rcp85") 
 CFs<- c("Warm Wet", "Hot Dry")
 
 ## All 508-compliant color scheme -- navy (hot wet), light blue (warm wet), pink (warm dry), red (hot dry)
@@ -208,7 +208,7 @@ ggplot(allreturns, aes(x=CF, y=mod,fill=CF)) +
        x ="20-year recurrence interval", y ="Precipitation (inches/day)") +
   scale_fill_manual(name="",values = colors3) 
 
-ggsave("20yr-bar-plot.png", width = PlotWidth, height = PlotHeight)
+ggsave("C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/HOCU/RCF/figures/additional/20yr-bar-plot.png", width = PlotWidth, height = PlotHeight)
 
 
 ######line plot of return int regressions
@@ -231,7 +231,7 @@ ggplot(allregressions, aes(x=return, y=modeled, group=CF, colour = CF)) +
   scale_fill_manual(name="",values = colors3) +
   scale_shape_manual(name="",values = c(21,22,23))
 
-ggsave("20yr-regressions.png", width = PlotWidth, height = PlotHeight)
+ggsave("C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/HOCU/RCF/figures/additional/20yr-regressions.png", width = PlotWidth, height = PlotHeight)
 
 allregressions
 
