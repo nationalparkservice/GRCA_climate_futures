@@ -27,7 +27,7 @@ pnt.list<-list.files(path=data.dir, pattern=".prcp.conus") #list all files by va
 
 var <- "prcp"
 
-plotDir <- "C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\regression plots\\" # AKD PlotDir
+plotDir <- "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/maps-figs/" # AKD PlotDir
 
 
 # ---   INITIALS  ---------------------------------------- #
@@ -97,7 +97,9 @@ for(i in 1:length(tables)) {
   rasters[[i]] <- x
 }
 
-st <- stack(rasters) # Create raster stack
+st <- readRDS("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\nClimGrid\\prcp_stack.Rds")
+
+#st <- stack(rasters) # Create raster stack
 plot(st[[1]])
 
 index <- rep(1:96, each = 12)
@@ -107,38 +109,38 @@ index <- rep(1:96, each = 12)
 ###############################
 ##### Run for only tempvar
 # Calculate annual means: output = rasterstack with 1 layer per year
-
-st_mean <- stackApply(st, indices = c(rep(1:96, each = 12)), fun = mean, na.rm = TRUE) # get annual mean first
+  
+st_mean <- stackApply(st, indices = c(rep(1:(nlayers(st)/12), each = 12)), fun = mean, na.rm = TRUE) # get annual mean first
 plot(st_mean[[1]])
-writeRaster(st_mean, "C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\rasters\\tmin\\st_mean.tif", format = "GTiff")
+writeRaster(st_mean, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/tmax/st_mean.tif", format = "GTiff")
 
 st_fahr <- calc(st_mean, fun = function(x){x*9/5 + 32}) # then convert to Fahrenheit
 plot(st_fahr)
-writeRaster(st_fahr, "C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\rasters\\tmin\\st_fahr.tif", format = "GTiff")
+writeRaster(st_fahr, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/tmax/st_fahr.tif", format = "GTiff")
 
 # Calculate overall mean: output = single raster with overall mean values
 
 ras_mean <- calc(st_fahr, fun = mean)
 plot(ras_mean)
 plot(Sp_ggcl, add = TRUE)
-writeRaster(ras_mean, "C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\rasters\\tmin\\ras_mean.tif", format = "GTiff")
+writeRaster(ras_mean, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/tmax/ras_mean.tif", format = "GTiff")
 
 ##################################
 
 # ###############################
 # ##### Run for only precip
-st_sum <- stackApply(st, indices = c(rep(1:96, each = 12)), fun = sum, na.rm = TRUE) # get total annual precip
+st_sum <- stackApply(st, indices = c(rep(1:(nlayers(st)/12), each = 12)), fun = sum, na.rm = TRUE) # get total annual precip
 plot(st_sum[[1]]) #
-writeRaster(st_sum, "C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\rasters\\prcp\\st_sum.tif", format = "GTiff")
+writeRaster(st_sum, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/prcp_mean.tif", format = "GTiff")
 
 # 
  st_mean_pr_tot <- calc(st_sum, fun = mean)
  plot(st_mean_pr_tot)
- writeRaster(st_mean_pr_tot, "C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\rasters\\prcp\\st_mean_pr_tot.tif", format = "GTiff")
+ writeRaster(st_mean_pr_tot, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/st_mean_pr_tot.tif", format = "GTiff")
 # 
 st_in <- calc(st_sum, fun = function(x){((x)/25.4)})
 plot(st_in)
-writeRaster(st_in, "C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\rasters\\prcp\\st_in.tif", format = "GTiff")
+writeRaster(st_in, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/st_in.tif", format = "GTiff")
 
 
 # Calculate overall mean: output = single raster with overall mean values
@@ -146,13 +148,13 @@ writeRaster(st_in, "C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptati
  ras_mean <- calc(st_in, fun = mean)
  plot(ras_mean)
  
- writeRaster(ras_mean, "C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\rasters\\prcp\\ras_mean.tif", format = "GTiff")
+ writeRaster(ras_mean, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/ras_mean.tif", format = "GTiff")
  
 #######################
 
 # ------  REGRESSION  -------------------------------------------------- #
 
-time <- 1:nlayers(st_in) # all years 1925 - 2020
+time <- 1:nlayers(st_in) # all years 1895 - 2020
 
 # Function to calculate slope and p-value
 
@@ -162,7 +164,7 @@ fun <- function(y) {
   } else {
     m = lm(y ~ time) 
     s = summary(m)
-    slope = s$coefficients[2] * 100 # change per 100 years
+    slope = s$coefficients[2] * 10 # change per 10 years
     pval =  pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3],lower.tail = FALSE)
     cbind(slope, pval)
   }
@@ -177,7 +179,7 @@ plot(r)
 slope <- subset(r, 1)
 
 pval <- subset(r, 2)
-pval[pval > 0.1] <- NA # Make values NA that are greater than 0.05
+pval[pval > 0.05] <- NA # Make values NA that are greater than 0.05
 
 sig <- mask(slope, pval)
 
@@ -188,13 +190,17 @@ plot(sig)
 plot(Sp_ggcl, add = TRUE)
 
 
-writeRaster(sig, "C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\rasters\\prcp\\prcp_delta.tif", format = "GTiff") # save raster of significant slope values
+writeRaster(sig, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/prcp_delta.tif", format = "GTiff") # save raster of significant slope values
 #writeRaster(sig, file = paste(plotDir,"/Rasters/tmean_delta.tif",sep=""),overwrite=TRUE) # save raster of significant slope values
 
 # -- TIME SERIES REGRESSION ---------------------------------------------- #
 # create dfs from rasters -- run parsing script, create dataframe from cell avgs, save
 
-yr<-seq(1925,2020,1)
+yr<-seq(1895,2020,1)
+
+#remove 1956 due to error
+yr <- yr[yr != 1956]
+
 Sp_ggcl<-spTransform(Sp_ggcl,CRSobj = "+init=epsg:4326") # project to Alaska Albers
 
 
@@ -205,7 +211,7 @@ plot(m_pr)
 
 pr<-data.frame(prcp=cellStats(m_pr,stat='mean'),year=yr)
 row.names(pr)<-NULL
-write.csv(pr,"C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\csvs\\prcp.csv",row.names=F)
+write.csv(pr,"C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/prcp.csv",row.names=F)
 
 
 m_temp_park <- mask(st_fahr,Sp_park)
@@ -214,9 +220,9 @@ m_temp_park <- mask(st_fahr,Sp_park)
 m_fahr <- mask(st_fahr, Sp_ggcl)
 plot(m_fahr)
 
-fahr<-data.frame(prcp=cellStats(st_fahr,stat='mean'),year=yr)
+fahr<-data.frame(tave=cellStats(st_fahr,stat='mean'),year=yr)
 row.names(fahr)<-NULL
-write.csv(fahr,"C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\csvs\\tmin.csv",row.names=F)
+write.csv(fahr,"C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/tmax/tmax.csv",row.names=F)
 
 
 m_temp_park <- mask(st_fahr,Sp_park)
@@ -244,18 +250,18 @@ m_temp_park <- mask(st_fahr,Sp_park)
 # ---  PLOTS ----------------------------------------- #      
 
 # read in csvs
-prcp<-read.csv("C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\csvs\\prcp.csv")
-tmax<-read.csv("C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\csvs\\tmax.csv")
-tmin<-read.csv("C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\csvs\\tmin.csv")
-tave<-read.csv("C:\\Users\\gknowlton\\DOI\\NPS-NRSS-CCRP-FC Science Adaptation - General\\RSS Stuff\\Parks\\GRCA_CCSP\\nClimGrid - Historical\\csvs\\tave.csv")
+prcp<-read.csv("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\nClimGrid\\output_corrected\\prcp\\prcp.csv")
+tmax<-read.csv("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\nClimGrid\\output_corrected\\tmax\\tmax.csv")
+tmin<-read.csv("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\nClimGrid\\output_corrected\\tmin\\tmin.csv")
+tave<-read.csv("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\nClimGrid\\output_corrected\\tave\\tave.csv")
 
 # -- TIME SERIES FROM PRISM SCRIPTS
-beginRefYr = 1925
+beginRefYr = 1895
 endRefYr = 1970
 
-BeginYr	= 1925   # is this data file or for plots?
+BeginYr	= 1895   # is this data file or for plots?
 EndYr = 2020
-dataEndYr = 2019   # needed for rolling mean plot below.  
+dataEndYr = 2020   # needed for rolling mean plot below.  
 stepYrs	= 10		  # for period plots 
 rollLen = 10      # period of calc for rolling average; default 10 = decadal
 
@@ -283,24 +289,43 @@ TitleSize = theme_get()$plot.title$size  ##Needed for cowplot layouts
 ############  Running average plots   #############
 #-------------------------------------------------#
 
-tave$tave 
-tmin$tmin 
-tmax$tmax 
-prcp$prcp 
+length(tave$tave) 
+length(tmin$tmin) 
+length(tmax$tmax) 
+length(prcp$prcp) 
+
+#add NA column to tave
+new.row <- data.frame(tave = NA, year = 1956, stringsAsFactors = F)
+as.integer(new.row$year)
+tave <- rbind.fill(tave, new.row)
+as.integer(tave$year)
 
 #rename column issue (all temp variables called in as prcp for some reason)
-tave <- tave %>% 
-  rename(tave = prcp)
+#tave <- tave %>% 
+#  rename(tave = prcp)
+#
+#tmin <- tmin %>% 
+#  rename(tmin = prcp)
+#
+#tmax <- tmax %>% 
+#  rename(tmax = prcp)
+#
+#prcp
 
-tmin <- tmin %>% 
-  rename(tmin = prcp)
+# data from 1956 missing, remove rows from other data frames to make equal lengths
 
-tmax <- tmax %>% 
-  rename(tmax = prcp)
+#tmin <- subset(tmin, year != 1956)
+#tmax <- subset(tmax, year != 1956)
+#prcp <- subset(prcp, year != 1956)
 
-prcp
 
 cYr <- BeginYr:EndYr
+
+# edit to remove 1956
+
+#cYr <- cYr[cYr != 1956]
+
+
 yrAvgs <- data.frame(cYr, tave$tave, tmin$tmin, tmax$tmax, prcp$prcp)
 names(yrAvgs)<-c("cYr","tave","tmin","tmax","prcp")
 
