@@ -154,7 +154,7 @@ writeRaster(st_in, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/o
 
 # ------  REGRESSION  -------------------------------------------------- #
 
-time <- 1:nlayers(st_in) # all years 1925 - 2020
+time <- 1:nlayers(st_in) # all years 1895 - 2020
 
 # Function to calculate slope and p-value
 
@@ -164,7 +164,7 @@ fun <- function(y) {
   } else {
     m = lm(y ~ time) 
     s = summary(m)
-    slope = s$coefficients[2] * 100 # change per 100 years
+    slope = s$coefficients[2] * 10 # change per 10 years
     pval =  pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3],lower.tail = FALSE)
     cbind(slope, pval)
   }
