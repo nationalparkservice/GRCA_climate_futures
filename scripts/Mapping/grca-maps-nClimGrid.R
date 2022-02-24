@@ -21,7 +21,7 @@ aa <- CRS('+init=EPSG:5070') # Conus Albers
 latlong = CRS('+init=EPSG:4326') # Lat/Long
 
 PlotIn <- "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/"
-PlotOut <- "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/maps-figs/"
+PlotOut <- "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/maps-figs/updated/"
 
 # NPS Boundary
 
@@ -78,7 +78,7 @@ plot(r)
 col=hcl.colors(n = 9, palette = "Oslo", alpha = 0.7)[3:9]
 #barplot(1/sqrt(1:length(col)), col = col)
 
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/maps-figs/Precip_mean.png")
+png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/maps-figs/updated/Precip_mean.png")
 
 plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
@@ -103,14 +103,14 @@ col=hcl.colors(n = 7, palette = "Blue-Yellow", alpha = 0.7, rev=TRUE)
 barplot(1/sqrt(1:length(col)), col = col)
 
 #png(paste(PlotOut,'Precip_delta.png',sep=""))
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/maps-figs/prcp_delta.png")
+png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/maps-figs/updated/prcp_delta.png")
 
 
 plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
 plot(Sp_ggcl, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text = "Precip (in)", line = 1)) +
-  title(main = "Change in Precipitation in GGCL (1895-1970 v. 1970-2020)")
+  title(main = "Change in Precipitation in GGCL (1895-2020)")
 
 dev.off()
 
@@ -131,7 +131,7 @@ col=hcl.colors(n = 7, palette = "Viridis", alpha = 0.5)
 barplot(1/sqrt(1:length(col)), col = col)
 
 #png(paste(PlotOut,'Tmax_mean.png',sep=""))
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/maps-figs/tmax_mean.png")
+png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/maps-figs/updated/tmax_mean.png")
 
 plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
@@ -162,7 +162,7 @@ plotRGB(az2)
 plot(r, col = col,  legend = FALSE, add = TRUE) 
 plot(Sp_ggcl, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text = expression("Temperature ("*~degree*F*")"), line = 1)) +
-  title(main = "Change in Tmax in GGCL (1895-1970 v. 1970-2020)")
+  title(main = "Change in Tmax in GGCL (1895-2020)")
 
 dev.off()
 
@@ -212,7 +212,7 @@ plotRGB(az2)
 plot(r, col = col,  legend = FALSE, add = TRUE) 
 plot(Sp_ggcl, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text = expression("Temperature ("*~degree*F*")"), line = 1)) +
-  title(main = "Change in Tmin in GGCL (1895-1970 v. 1970-2020)")
+  title(main = "Change in Tmin in GGCL (1895-2020)")
 
 dev.off()
 
@@ -262,7 +262,7 @@ plotRGB(az2)
 plot(r, col = col,  legend = FALSE, add = TRUE)
 plot(Sp_ggcl, add = TRUE) + 
   plot(r, col = col,legend.only = TRUE, horizontal = TRUE, legend.args = list(t = expression("Temperature ("*~degree*F*")"), line = 1)) +
-  title(main = "Change in Tmean in GGCL (1895-1970 v. 1970-2020)")
+  title(main = "Change in Tmean in GGCL (1895-2020)")
 
 dev.off()
 
