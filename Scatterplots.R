@@ -93,7 +93,7 @@ dualscatter  + geom_text_repel(aes(label=GCM)) +
         plot.title=element_text(size=18,face="bold",vjust=2,hjust=0.5),
         legend.text=element_text(size=18), legend.title=element_text(size=16)) + 
   ###
-  labs(title ="GGCL changes in climate means in 2055 by model run", 
+  labs(title ="Changes in climate means in 2055 by model run", 
        x = paste("Changes in ",Longx,sep=""), # Change
        y = paste("Changes in ",Longy,sep="")) + #change
   scale_color_manual(name="Emissions", values=col.RCP2) 
@@ -104,28 +104,3 @@ ggsave(paste0(DataDir,"GGCL-Scatter-modelSelect.png"), width = 15, height = 9)
 
 
 
-dualscatter = ggplot(Future_Means, aes(DeltaTavg, DeltaPr*365, xmin=Tavg25, xmax=Tavg75, ymin=Pr25*365, ymax=Pr75*365))
-
-dualscatter  + geom_text_repel(aes(label=GCM)) +
-  geom_point(colour="black",size=4) +
-  geom_point(aes(x=mean(DeltaTavg[which(CF==CFs[1])]), y=mean(365*DeltaPr[which(CF==CFs[1])])), shape=8, size=7, stroke=3, colour=colors2[1]) +
-  geom_point(aes(x=mean(DeltaTavg[which(CF==CFs[2])]), y=mean(365*DeltaPr[which(CF==CFs[2])])), shape=8, size=7, stroke=3, colour=colors2[2]) +
-  geom_point(aes(x=mean(DeltaTavg[which(WB_GCM==CFs[1])]), y=mean(365*DeltaPr[which(WB_GCM==CFs[1])])), shape=21, size=10, stroke=3, colour=colors2[1]) +
-  geom_point(aes(x=mean(DeltaTavg[which(WB_GCM==CFs[2])]), y=mean(365*DeltaPr[which(WB_GCM==CFs[2])])), shape=21, size=10, stroke=3, colour=colors2[2]) +
-  geom_point(aes(x=mean(DeltaTavg[which(WB_GCM==CFs[1])]), y=mean(365*DeltaPr[which(WB_GCM==CFs[1])])), shape=20, size=2,  colour=colors2[1]) +
-  geom_point(aes(x=mean(DeltaTavg[which(WB_GCM==CFs[2])]), y=mean(365*DeltaPr[which(WB_GCM==CFs[2])])), shape=20, size=2,  colour=colors2[2]) +
-  theme(axis.text=element_text(size=18),
-        axis.title.x=element_text(size=18,vjust=-0.2),
-        axis.title.y=element_text(size=18,vjust=0.2),
-        plot.title=element_text(size=18,face="bold",vjust=2,hjust=0.5),
-        legend.text=element_text(size=18), legend.title=element_text(size=16)) + 
-  ###
-  labs(title =paste(SiteID," Changes in climate means in ", Yr, " by GCM run",sep=""), 
-       x = paste("Changes in ",Longx,sep=""), # Change
-       y = paste("Changes in ",Longy,sep="")) + #change
-  scale_color_manual(name="Scenarios", values=c("black")) +
-  # scale_fill_manual(name="Scenarios",values = c("black")) + 
-  theme(legend.position="none") +
-  geom_rect(color = "black", alpha=0) + 
-  geom_hline(aes(yintercept=mean(DeltaPr*365)),linetype=2) + #change
-  geom_vline(aes(xintercept=mean(DeltaTavg)),linetype=2) #change
