@@ -129,12 +129,12 @@ ALL_FUTURE$Prcpmm<-ALL_FUTURE$precip_mm
 ALL_FUTURE$TavgC<-(ALL_FUTURE$tmean_F-32)*5/9
 ALL_FUTURE$PET<-thornthwaite(ALL_FUTURE$TavgC,lat=Lat)
 
-Mon <- subset(ALL_FUTURE, select=c("Month","Year","GCM","TavgC","Prcpmm","PET"))
+Mon <- subset(ALL_FUTURE, as.numeric(Year)>2020,select=c("Month","Year","GCM","TavgC","Prcpmm","PET"))
 
 drt$GCM<-GCMs[1]
 d<-drt; d$GCM <- GCMs[2]
 drt<-rbind(drt,d)
-d<-subset(drt, select=c("Month","Year","GCM","TavgC","Prcpmm","PET"))
+d<-subset(drt,  select=c("Month","Year","GCM","TavgC","Prcpmm","PET"))
 Mon <- rbind(d,Mon)
 
 Mon<-merge(Mon,CF_GCM,by="GCM")
