@@ -156,19 +156,23 @@ Tmax_ch_all$elevation <- factor(Tmax_ch_all$elevation, levels=c("338-1160","1161
 Tmax_ch_all$elevation <- revalue(Tmax_ch_all$elevation, c("338-1160"="1109-3807", "1161-1980"="3808-6497", "1981-2739"="6498-8987"))
 
 
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/heatmaps/plots/new/tmax_change_heatmap.png",
+png("output/figs/decadal/tmax_change_heatmap.png",
     width = 900, height = 600)
 
 ggplot(Tmax_ch_all, aes(x=factor(season, level = c('Annual', 'Spring', 'Summer', 'Fall', 'Winter')), y=elevation, fill=change_dec)) +
   geom_tile(color="white", size=0.2) +
-  geom_text(aes(label=round(change_dec,2))) +
-  guides(fill=guide_legend(title = "Decadal Change in Tmax (\u00B0F)")) +
+  geom_text(size=6,aes(label=round(change_dec,2))) +
+  guides(fill=guide_legend(title = "Decadal Change in Tmax (\u00B0F)",reverse = TRUE)) +
   scale_fill_distiller(palette = "YlOrRd", trans = "reverse") +
   theme_bw(base_size=14) +
   labs(title = "Average Decadal Change in Tmax (\u00B0F) by Season (1895-2020)",
-       x = "Season",
+       x = "",
        y = "Elevation (ft)") +
-  theme(plot.title = element_text(hjust=0.5))
+  theme(plot.title = element_text(hjust=0.5),
+        axis.text = element_text(size = 20),
+        legend.text = element_text(size = 17),
+        axis.title.y = element_text(size = 20),
+        axis.text.x = element_text(angle = 90))
 
 dev.off()
 
@@ -222,19 +226,23 @@ Tave_ch_all$elevation <- factor(Tave_ch_all$elevation, levels=c("338-1160","1161
 Tave_ch_all$elevation <- revalue(Tave_ch_all$elevation, c("338-1160"="1109-3807", "1161-1980"="3808-6497", "1981-2739"="6498-8987"))
 
 
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/heatmaps/plots/new/tave_change_heatmap.png",
+png("output/figs/decadal/tave_change_heatmap.png",
     width = 900, height = 600)
 
 ggplot(Tave_ch_all, aes(x=factor(season, level = c('Annual', 'Spring', 'Summer', 'Fall', 'Winter')), y=elevation, fill=change_dec)) +
   geom_tile(color="white", size=0.2) +
-  geom_text(aes(label=round(change_dec,2))) +
-  guides(fill=guide_legend(title = "Decadal Change in Tave (\u00B0F)")) +
+  geom_text(size=6,aes(label=round(change_dec,2))) +
+  guides(fill=guide_legend(title = "Decadal Change in Tave (\u00B0F)",reverse = TRUE)) +
   scale_fill_distiller(palette = "YlOrRd", trans = "reverse") +
   theme_bw(base_size=14) +
   labs(title = "Average Decadal Change in Tave (\u00B0F) by Season (1895-2020)",
-       x = "Season",
+       x = "",
        y = "Elevation (ft)") +
-  theme(plot.title = element_text(hjust=0.5))
+  theme(plot.title = element_text(hjust=0.5),
+        axis.text = element_text(size = 20),
+        legend.text = element_text(size = 17),
+        axis.title.y = element_text(size = 20),
+        axis.text.x = element_text(angle = 90))
 
 dev.off()
 
@@ -287,19 +295,23 @@ Tmin_ch_all$elevation <- factor(Tmin_ch_all$elevation, levels=c("338-1160","1161
 Tmin_ch_all$elevation <- revalue(Tmin_ch_all$elevation, c("338-1160"="1109-3807", "1161-1980"="3808-6497", "1981-2739"="6498-8987"))
 
 
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/heatmaps/plots/new/tmin_change_heatmap.png",
+png("output/figs/decadal/tmin_change_heatmap.png",
     width = 900, height = 600)
 
 ggplot(Tmin_ch_all, aes(x=factor(season, level = c('Annual', 'Spring', 'Summer', 'Fall', 'Winter')), y=elevation, fill=change_dec)) +
   geom_tile(color="white", size=0.2) +
-  geom_text(aes(label=round(change_dec,2))) +
-  guides(fill=guide_legend(title = "Decadal Change in Tmin (\u00B0F)")) +
+  geom_text(size=6,aes(label=round(change_dec,2))) +
+  guides(fill=guide_legend(title = "Decadal Change in Tmin (\u00B0F)",reverse=TRUE)) +
   scale_fill_distiller(palette = "YlOrRd", trans = "reverse") +
   theme_bw(base_size=14) +
   labs(title = "Average Decadal Change in Tmin (\u00B0F) by Season (1895-2020)",
-       x = "Season",
+       x = "",
        y = "Elevation (ft)") +
-  theme(plot.title = element_text(hjust=0.5))
+  theme(plot.title = element_text(hjust=0.5),
+        axis.text = element_text(size = 20),
+        legend.text = element_text(size = 17),
+        axis.title.y = element_text(size = 20),
+        axis.text.x = element_text(angle = 90))
 
 dev.off()
 
@@ -352,19 +364,23 @@ prcp_ch_all$elevation <- factor(prcp_ch_all$elevation, levels=c("338-1160","1161
 prcp_ch_all$elevation <- revalue(prcp_ch_all$elevation, c("338-1160"="1109-3807", "1161-1980"="3808-6497", "1981-2739"="6498-8987"))
 
 
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/heatmaps/plots/new/prcp_change_heatmap.png",
+png("output/figs/decadal/prcp_change_heatmap.png",
     width = 900, height = 600)
 
 ggplot(prcp_ch_all, aes(x=factor(season, level = c('Annual', 'Spring', 'Summer', 'Fall', 'Winter')), y=elevation, fill=change_dec)) +
   geom_tile(color="white", size=0.2) +
-  geom_text(aes(label=round(change_dec,4))) +
-  guides(fill=guide_legend(title = "Decadal Change in Precipitation (in)")) +
+  geom_text(size=6,aes(label=round(change_dec,4))) +
+  guides(fill=guide_legend(title = "Decadal Change in Precipitation (in)",reverse=TRUE)) +
   scale_fill_distiller(palette = "BrBG", trans = "reverse") +
   theme_bw(base_size=14) +
   labs(title = "Average Decadal Change in Precipitation (in) by Season (1895-2020)",
-       x = "Season",
+       x = "",
        y = "Elevation (ft)") +
-  theme(plot.title = element_text(hjust=0.5))
+  theme(plot.title = element_text(hjust=0.5),
+        axis.text = element_text(size = 20),
+        legend.text = element_text(size = 17),
+        axis.title.y = element_text(size = 20),
+        axis.text.x = element_text(angle = 90))
 
 dev.off()
 
