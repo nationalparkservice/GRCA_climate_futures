@@ -367,6 +367,11 @@ write.csv(Drought_char,paste0(FigDir,"Drought_char.csv"),row.names=FALSE)
 #Drought duration barplot
 Drought_all = Drought_char
 Drought_all$CF = factor(Drought_all$CF, levels = c("Historical",CFs))
+Drought_all <- merge(Drought_all, CF_GCM,by="CF",all.x=T)
+Drought_all$GCM[is.na(Drought_all$GCM)]="Historical"
+Drought_all$GCM <- factor(Drought_all$GCM,levels= c("Historical",GCMs))
+colnames(Drought_all)[1]<-"CF1"
+Drought_all$CF<-Drought_all$GCM
 
 #Drought duration barplot
 var_bar_plot(Drought_all,"Duration", colors3, "Average Drought Duration", "Years")
@@ -391,9 +396,9 @@ ggsave("Bar-DroughtFrequency.png", path = FigDir, height=PlotHeight, width=PlotW
 ####################################### REPORT FIGURES ##############################################
 # Option 1
 a <- SPEI_annual_bar(CF1, period.box=T,
-                     title=CFs[1]) 
+                     title=GCMs[1]) 
 b <- SPEI_annual_bar(CF2, period.box=T,
-                     title=CFs[2])
+                     title=GCMs[2])
 
 c <- var_bar_plot(Drought_all,"Duration", colors3, "Duration", "Years")
 d <- var_bar_plot(Drought_all,"Frequency", colors3, "Return interval", 
