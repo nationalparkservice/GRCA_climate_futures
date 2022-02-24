@@ -10,6 +10,7 @@ library(raster)
 library(sf)
 library(lubridate)
 library(dplyr)
+library(tidyverse)
 
 ######### data wrangling ######### 
 # data
@@ -217,19 +218,23 @@ annual_avg_tmax <- tmax %>%
 
 tmax_plot <- rbind(tmax_means, annual_avg_tmax)
 
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/heatmaps/plots/tmax_heatmap.png",
+png("output/figs/tmax_heatmap.png",
     width = 900, height = 600)
 
 ggplot(tmax_plot, aes(x=factor(season, level = c('Annual', 'Spring', 'Summer', 'Fall', 'Winter')), y=Elevation, fill=tempF)) +
   geom_tile(color="white", size=0.2) +
-  geom_text(aes(label=round(tempF,2))) +
-  guides(fill=guide_legend(title = "Average Tmax (F)")) +
+  geom_text(size = 7,aes(label=round(tempF,2))) +
+  guides(fill=guide_legend(title = "Average Tmax (F)", reverse = TRUE)) +
   scale_fill_distiller(palette = "YlOrRd", trans = "reverse") +
   theme_bw(base_size=14) +
-  labs(title = "Average Tmax (F) by Season (1895-2020)",
-       x = "Season",
+  labs(title = "Average Maximum Temp (F) by Season (1895-2020)",
+       x = "",
        y = "Elevation (m)") +
-  theme(plot.title = element_text(hjust=0.5))
+  theme(plot.title = element_text(hjust=0.5),
+        axis.text = element_text(size = 20),
+        legend.text = element_text(size = 17),
+        axis.title.y = element_text(size = 20),
+        axis.text.x = element_text(angle = 90))
 
 dev.off()
 
@@ -260,19 +265,23 @@ annual_avg_tmin <- tmin %>%
 
 tmin_plot <- rbind(tmin_means, annual_avg_tmin)
 
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/heatmaps/plots/tmin_heatmap.png",
+png("output/figs/tmin_heatmap.png",
     width = 900, height = 600)
 
 ggplot(tmin_plot, aes(x=factor(season, level = c('Annual', 'Spring', 'Summer', 'Fall', 'Winter')), y=Elevation, fill=tempF)) +
   geom_tile(color="white", size=0.2) +
-  geom_text(aes(label=round(tempF,2))) +
-  guides(fill=guide_legend(title = "Average Tmin (F)")) +
+  geom_text(size = 7,aes(label=round(tempF,2))) +
+  guides(fill=guide_legend(title = "Average Tmin (F)", reverse = TRUE)) +
   scale_fill_distiller(palette = "YlOrRd", trans = "reverse") +
   theme_bw(base_size=14) +
-  labs(title = "Average Tmin (F) by Season (1895-2020)",
-       x = "Season",
+  labs(title = "Average Minimum Temp (F) by Season (1895-2020)",
+       x = "",
        y = "Elevation (m)") +
-  theme(plot.title = element_text(hjust=0.5))
+  theme(plot.title = element_text(hjust=0.5),
+        axis.text = element_text(size = 20),
+        legend.text = element_text(size = 17),
+        axis.title.y = element_text(size = 20),
+        axis.text.x = element_text(angle = 90))
 
 dev.off()
 
@@ -303,18 +312,22 @@ annual_avg_prcp <- prcp %>%
 
 prcp_plot <- rbind(prcp_means, annual_avg_prcp)
 
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/heatmaps/plots/prcp_heatmap.png",
+png("output/figs/prcp_heatmap.png",
     width = 900, height = 600)
 
 ggplot(prcp_plot, aes(x=factor(season, level = c('Annual', 'Spring', 'Summer', 'Fall', 'Winter')), y=Elevation, fill=inches)) +
   geom_tile(color="white", size=0.2) +
-  geom_text(aes(label=round(inches,2))) +
-  guides(fill=guide_legend(title = "Average Monthly Precipitation (In)")) +
+  geom_text(size = 7,aes(label=round(inches,2))) +
+  guides(fill=guide_legend(title = "Average Precip (In)", reverse = TRUE)) +
   scale_fill_distiller(palette = "BrBG", trans = "reverse") +
   theme_bw(base_size=14) +
   labs(title = "Average Monthly Precipitation (In) by Season (1895-2020)",
-       x = "Season",
+       x = "",
        y = "Elevation (m)") +
-  theme(plot.title = element_text(hjust=0.5))
+  theme(plot.title = element_text(hjust=0.5),
+        axis.text = element_text(size = 20),
+        legend.text = element_text(size = 17),
+        axis.title.y = element_text(size = 20),
+        axis.text.x = element_text(angle = 90))
 
 dev.off()

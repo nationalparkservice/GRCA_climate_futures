@@ -6,7 +6,6 @@ library(tidyr)
 library(stringr)
 library(ggplot2)
 
-
 #read in data
 tmax <- read.csv("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/heatmaps/tmax_hm.csv")
 tmin <- read.csv("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/heatmaps/tmin_hm.csv")
@@ -109,14 +108,14 @@ by_annual <-
 
 # tmax
 
-Tmax_ch_sea <- do(by_sea_ele,
+ do(by_sea_ele,
         tidy(
           lm(TmaxF ~ Year, data = .)
-        ))
+        )) -> Tmax_ch_sea
 
 Tmax_ch_sea <- Tmax_ch_sea %>%
   spread(term, estimate) %>%
-  select(sea_ele, Year) %>% drop_na()
+  select(sea_ele, Year, p.value) %>% drop_na()
 
 Tmax_ch_sea$change_dec <- (Tmax_ch_sea$Year * 10)
 
@@ -127,14 +126,14 @@ Tmax_ch_sea$season <- seasons
 Tmax_ch_sea$elevation <- elevations
 Tmax_ch_sea
 
-Tmax_ch_ann <- do(by_annual,
-                  tidy(
-                    lm(TmaxF ~ Year, data = .)
-                  ))
+do(by_annual,
+   tidy(
+     lm(TmaxF ~ Year, data = .)
+   )) -> Tmax_ch_ann
 
 Tmax_ch_ann <- Tmax_ch_ann %>%
   spread(term, estimate) %>%
-  select(Elevation, Year) %>% drop_na()
+  select(Elevation, Year, p.value) %>% drop_na()
 
 Tmax_ch_ann$change_dec <- (Tmax_ch_ann$Year * 10)
 
@@ -155,34 +154,39 @@ Tmax_ch_all$elevation <- factor(Tmax_ch_all$elevation, levels=c("338-1160","1161
 #convert to feet
 Tmax_ch_all$elevation <- revalue(Tmax_ch_all$elevation, c("338-1160"="1109-3807", "1161-1980"="3808-6497", "1981-2739"="6498-8987"))
 
+write.csv(Tmax_ch_all, "C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/regression output/tmax_regression_output.csv")
 
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/heatmaps/plots/new/tmax_change_heatmap.png",
+png("output/figs/decadal/tmax_change_heatmap.png",
     width = 900, height = 600)
 
 ggplot(Tmax_ch_all, aes(x=factor(season, level = c('Annual', 'Spring', 'Summer', 'Fall', 'Winter')), y=elevation, fill=change_dec)) +
   geom_tile(color="white", size=0.2) +
-  geom_text(aes(label=round(change_dec,2))) +
-  guides(fill=guide_legend(title = "Decadal Change in Tmax (\u00B0F)")) +
+  geom_text(size=6,aes(label=round(change_dec,2))) +
+  guides(fill=guide_legend(title = "Decadal Change in Tmax (\u00B0F)",reverse = TRUE)) +
   scale_fill_distiller(palette = "YlOrRd", trans = "reverse") +
   theme_bw(base_size=14) +
   labs(title = "Average Decadal Change in Tmax (\u00B0F) by Season (1895-2020)",
-       x = "Season",
+       x = "",
        y = "Elevation (ft)") +
-  theme(plot.title = element_text(hjust=0.5))
+  theme(plot.title = element_text(hjust=0.5),
+        axis.text = element_text(size = 20),
+        legend.text = element_text(size = 17),
+        axis.title.y = element_text(size = 20),
+        axis.text.x = element_text(angle = 90))
 
 dev.off()
 
 
 # tave
 
-Tave_ch_sea <- do(by_sea_ele,
-                  tidy(
-                    lm(TaveF ~ Year, data = .)
-                  ))
+do(by_sea_ele,
+   tidy(
+     lm(TaveF ~ Year, data = .)
+                  )) -> Tave_ch_sea
 
 Tave_ch_sea <- Tave_ch_sea %>%
   spread(term, estimate) %>%
-  select(sea_ele, Year) %>% drop_na()
+  select(sea_ele, Year, p.value) %>% drop_na()
 
 Tave_ch_sea$change_dec <- (Tave_ch_sea$Year * 10)
 
@@ -193,14 +197,14 @@ Tave_ch_sea$season <- seasons
 Tave_ch_sea$elevation <- elevations
 Tave_ch_sea
 
-Tave_ch_ann <- do(by_annual,
-                  tidy(
-                    lm(TaveF ~ Year, data = .)
-                  ))
+do(by_annual,
+   tidy(
+     lm(TaveF ~ Year, data = .)
+   )) -> Tave_ch_ann
 
 Tave_ch_ann <- Tave_ch_ann %>%
   spread(term, estimate) %>%
-  select(Elevation, Year) %>% drop_na()
+  select(Elevation, Year, p.value) %>% drop_na()
 
 Tave_ch_ann$change_dec <- (Tave_ch_ann$Year * 10)
 
@@ -221,33 +225,38 @@ Tave_ch_all$elevation <- factor(Tave_ch_all$elevation, levels=c("338-1160","1161
 #convert to feet
 Tave_ch_all$elevation <- revalue(Tave_ch_all$elevation, c("338-1160"="1109-3807", "1161-1980"="3808-6497", "1981-2739"="6498-8987"))
 
+write.csv(Tave_ch_all, "C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/regression output/tave_regression_output.csv")
 
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/heatmaps/plots/new/tave_change_heatmap.png",
+png("output/figs/decadal/tave_change_heatmap.png",
     width = 900, height = 600)
 
 ggplot(Tave_ch_all, aes(x=factor(season, level = c('Annual', 'Spring', 'Summer', 'Fall', 'Winter')), y=elevation, fill=change_dec)) +
   geom_tile(color="white", size=0.2) +
-  geom_text(aes(label=round(change_dec,2))) +
-  guides(fill=guide_legend(title = "Decadal Change in Tave (\u00B0F)")) +
+  geom_text(size=6,aes(label=round(change_dec,2))) +
+  guides(fill=guide_legend(title = "Decadal Change in Tave (\u00B0F)",reverse = TRUE)) +
   scale_fill_distiller(palette = "YlOrRd", trans = "reverse") +
   theme_bw(base_size=14) +
   labs(title = "Average Decadal Change in Tave (\u00B0F) by Season (1895-2020)",
-       x = "Season",
+       x = "",
        y = "Elevation (ft)") +
-  theme(plot.title = element_text(hjust=0.5))
+  theme(plot.title = element_text(hjust=0.5),
+        axis.text = element_text(size = 20),
+        legend.text = element_text(size = 17),
+        axis.title.y = element_text(size = 20),
+        axis.text.x = element_text(angle = 90))
 
 dev.off()
 
 # tmin
 
-Tmin_ch_sea <- do(by_sea_ele,
-                  tidy(
-                    lm(TminF ~ Year, data = .)
-                  ))
+do(by_sea_ele,
+   tidy(
+     lm(TminF ~ Year, data = .)
+   )) -> Tmin_ch_sea
 
 Tmin_ch_sea <- Tmin_ch_sea %>%
   spread(term, estimate) %>%
-  select(sea_ele, Year) %>% drop_na()
+  select(sea_ele, Year, p.value) %>% drop_na()
 
 Tmin_ch_sea$change_dec <- (Tmin_ch_sea$Year * 10)
 
@@ -265,7 +274,7 @@ Tmin_ch_ann <- do(by_annual,
 
 Tmin_ch_ann <- Tmin_ch_ann %>%
   spread(term, estimate) %>%
-  select(Elevation, Year) %>% drop_na()
+  select(Elevation, Year, p.value) %>% drop_na()
 
 Tmin_ch_ann$change_dec <- (Tmin_ch_ann$Year * 10)
 
@@ -286,33 +295,39 @@ Tmin_ch_all$elevation <- factor(Tmin_ch_all$elevation, levels=c("338-1160","1161
 #convert to feet
 Tmin_ch_all$elevation <- revalue(Tmin_ch_all$elevation, c("338-1160"="1109-3807", "1161-1980"="3808-6497", "1981-2739"="6498-8987"))
 
+write.csv(Tmin_ch_all, "C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/regression output/tmin_regression_output.csv")
 
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/heatmaps/plots/new/tmin_change_heatmap.png",
+
+png("output/figs/decadal/tmin_change_heatmap.png",
     width = 900, height = 600)
 
 ggplot(Tmin_ch_all, aes(x=factor(season, level = c('Annual', 'Spring', 'Summer', 'Fall', 'Winter')), y=elevation, fill=change_dec)) +
   geom_tile(color="white", size=0.2) +
-  geom_text(aes(label=round(change_dec,2))) +
-  guides(fill=guide_legend(title = "Decadal Change in Tmin (\u00B0F)")) +
+  geom_text(size=6,aes(label=round(change_dec,2))) +
+  guides(fill=guide_legend(title = "Decadal Change in Tmin (\u00B0F)",reverse=TRUE)) +
   scale_fill_distiller(palette = "YlOrRd", trans = "reverse") +
   theme_bw(base_size=14) +
   labs(title = "Average Decadal Change in Tmin (\u00B0F) by Season (1895-2020)",
-       x = "Season",
+       x = "",
        y = "Elevation (ft)") +
-  theme(plot.title = element_text(hjust=0.5))
+  theme(plot.title = element_text(hjust=0.5),
+        axis.text = element_text(size = 20),
+        legend.text = element_text(size = 17),
+        axis.title.y = element_text(size = 20),
+        axis.text.x = element_text(angle = 90))
 
 dev.off()
 
 # prcp
 
-prcp_ch_sea <- do(by_sea_ele,
-                  tidy(
-                    lm(prcp_in ~ Year, data = .)
-                  ))
+do(by_sea_ele,
+   tidy(
+     lm(prcp_in ~ Year, data = .)
+   )) -> prcp_ch_sea
 
 prcp_ch_sea <- prcp_ch_sea %>%
   spread(term, estimate) %>%
-  select(sea_ele, Year) %>% drop_na()
+  select(sea_ele, Year, p.value) %>% drop_na()
 
 prcp_ch_sea$change_dec <- (prcp_ch_sea$Year * 10)
 
@@ -323,14 +338,14 @@ prcp_ch_sea$season <- seasons
 prcp_ch_sea$elevation <- elevations
 prcp_ch_sea
 
-prcp_ch_ann <- do(by_annual,
-                  tidy(
-                    lm(prcp_in ~ Year, data = .)
-                  ))
+do(by_annual,
+   tidy(
+     lm(prcp_in ~ Year, data = .)
+   )) -> prcp_ch_ann
 
 prcp_ch_ann <- prcp_ch_ann %>%
   spread(term, estimate) %>%
-  select(Elevation, Year) %>% drop_na()
+  select(Elevation, Year, p.value) %>% drop_na()
 
 prcp_ch_ann$change_dec <- (prcp_ch_ann$Year * 10)
 
@@ -351,20 +366,26 @@ prcp_ch_all$elevation <- factor(prcp_ch_all$elevation, levels=c("338-1160","1161
 #convert to feet
 prcp_ch_all$elevation <- revalue(prcp_ch_all$elevation, c("338-1160"="1109-3807", "1161-1980"="3808-6497", "1981-2739"="6498-8987"))
 
+write.csv(prcp_ch_all, "C:/Users/gknowlton/DOI/NPS-NRSS-CCRP-FC Science Adaptation - General/RSS Stuff/Parks/GRCA_CCSP/nClimGrid - Historical/regression output/prcp_regression_output.csv")
 
-png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/heatmaps/plots/new/prcp_change_heatmap.png",
+
+png("output/figs/decadal/prcp_change_heatmap.png",
     width = 900, height = 600)
 
 ggplot(prcp_ch_all, aes(x=factor(season, level = c('Annual', 'Spring', 'Summer', 'Fall', 'Winter')), y=elevation, fill=change_dec)) +
   geom_tile(color="white", size=0.2) +
-  geom_text(aes(label=round(change_dec,4))) +
-  guides(fill=guide_legend(title = "Decadal Change in Precipitation (in)")) +
+  geom_text(size=6,aes(label=round(change_dec,4))) +
+  guides(fill=guide_legend(title = "Decadal Change in Precipitation (in)",reverse=TRUE)) +
   scale_fill_distiller(palette = "BrBG", trans = "reverse") +
   theme_bw(base_size=14) +
   labs(title = "Average Decadal Change in Precipitation (in) by Season (1895-2020)",
-       x = "Season",
+       x = "",
        y = "Elevation (ft)") +
-  theme(plot.title = element_text(hjust=0.5))
+  theme(plot.title = element_text(hjust=0.5),
+        axis.text = element_text(size = 20),
+        legend.text = element_text(size = 17),
+        axis.title.y = element_text(size = 20),
+        axis.text.x = element_text(angle = 90))
 
 dev.off()
 

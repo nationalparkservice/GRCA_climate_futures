@@ -21,7 +21,7 @@ aa <- CRS('+init=EPSG:5070') # Conus Albers
 latlong = CRS('+init=EPSG:4326') # Lat/Long
 
 PlotIn <- "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/"
-PlotOut <- "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/maps-figs/updated/"
+PlotOut <- "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/maps-figs/feb22/"
 
 # NPS Boundary
 
@@ -66,11 +66,12 @@ plot(Sp_ggcl, add = TRUE)
 ###################################
 # Precipitation
 ###################################
-# Mean
+# Prcp Mean
 r <- raster("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\nClimGrid\\output_corrected\\prcp\\ras_mean.tif")
 crs(r) <- latlong
 r<-projectRaster(r, crs=crs(aa))
 crs(Sp_ggcl) <- aa
+crs(Sp_park) <- aa
 r<-mask(r,Sp_ggcl)
 plot(r)
 
@@ -82,7 +83,8 @@ png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected
 
 plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
-plot(Sp_ggcl, add = TRUE) + 
+plot(Sp_ggcl, add = TRUE)
+plot(Sp_park, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text = "Precip (in)", line = 1)) +
   title("Average Precipitation in GGCL (1895-2020)")
 
@@ -108,7 +110,8 @@ png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected
 
 plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
-plot(Sp_ggcl, add = TRUE) + 
+plot(Sp_ggcl, add = TRUE)
+plot(Sp_park, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text = "Precip (in)", line = 1)) +
   title(main = "Change in Precipitation in GGCL (1895-2020)")
 
@@ -135,7 +138,8 @@ png("C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected
 
 plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
-plot(Sp_ggcl, add = TRUE) + 
+plot(Sp_ggcl, add = TRUE)
+plot(Sp_park, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text =  expression("Temperature ("*~degree*F*")"), line = 1)) +
   title("Average Tmax in GGCL (1895-2020)")
 
@@ -160,7 +164,8 @@ png(paste(PlotOut,'/Tmax_delta.png',sep=""))
 
 plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
-plot(Sp_ggcl, add = TRUE) + 
+plot(Sp_ggcl, add = TRUE)
+plot(Sp_park, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text = expression("Temperature ("*~degree*F*")"), line = 1)) +
   title(main = "Change in Tmax in GGCL (1895-2020)")
 
@@ -171,7 +176,7 @@ dev.off()
 # Tmin
 ###################################
 # Mean
-r <- raster("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\nClimGrid\\output_corrected\\tmax\\ras_mean.tif")
+r <- raster("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\nClimGrid\\output_corrected\\tmin\\ras_mean.tif")
 crs(r) <- latlong
 r<-projectRaster(r, crs=crs(aa))
 r<-mask(r,Sp_ggcl)
@@ -185,7 +190,8 @@ png(paste(PlotOut,'/Tmin_mean.png',sep=""))
 
 plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
-plot(Sp_ggcl, add = TRUE) + 
+plot(Sp_ggcl, add = TRUE)
+plot(Sp_park, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text =  expression("Temperature ("*~degree*F*")"), line = 1)) +
   title("Average Tmin in GGCL (1895-2020)")
 
@@ -210,7 +216,8 @@ png(paste(PlotOut,'/Tmin_delta.png',sep=""))
 
 plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE) 
-plot(Sp_ggcl, add = TRUE) + 
+plot(Sp_ggcl, add = TRUE)
+plot(Sp_park, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text = expression("Temperature ("*~degree*F*")"), line = 1)) +
   title(main = "Change in Tmin in GGCL (1895-2020)")
 
@@ -235,7 +242,8 @@ png(paste(PlotOut,'/Tave_mean.png',sep=""))
 
 plotRGB(az2) 
 plot(r, col = col, legend = FALSE, add = TRUE) 
-plot(Sp_ggcl, add = TRUE) + 
+plot(Sp_ggcl, add = TRUE)
+plot(Sp_park, add = TRUE) + 
   plot(r, col = col, legend.only = TRUE, horizontal = TRUE, legend.args = list(text =  expression("Temperature ("*~degree*F*")"), line = 1)) +
   title("Average Tmean in GGCL (1895-2020)")
 
@@ -260,7 +268,8 @@ png(paste(PlotOut,'/Tave_delta.png',sep=""))
 
 plotRGB(az2) 
 plot(r, col = col,  legend = FALSE, add = TRUE)
-plot(Sp_ggcl, add = TRUE) + 
+plot(Sp_ggcl, add = TRUE)
+plot(Sp_park, add = TRUE) + 
   plot(r, col = col,legend.only = TRUE, horizontal = TRUE, legend.args = list(t = expression("Temperature ("*~degree*F*")"), line = 1)) +
   title(main = "Change in Tmean in GGCL (1895-2020)")
 
