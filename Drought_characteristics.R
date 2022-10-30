@@ -10,9 +10,10 @@ library(gridExtra)
 library(grid)
 library(lemon)
 library(ggpubr)
-library(WaterBalance)
+# library(WaterBalance)
 
 rm(list=ls())
+plotDir <- "C:/Users/achildress/DOI/NPS-NRSS-CCRP-FC Science Adaptation - Documents/General/TARs/GRCA_Climate_Report/GRCA_report_proper/Revised_Figs_ACR/" # AKD PlotDir
 
 ### Drought timeseries bar plot function
 #Height and width 
@@ -73,7 +74,7 @@ CFs<- c("Warm Wet", "Hot Dry")
 CF_GCM <- data.frame(CF = CFs, GCM = GCMs)
 
 SPEI_start <- 1981
-SPEI_end <- 2012
+SPEI_end <- 2010
 
 ## SPEI variables
 SPEI_per<-6 # This is the value for the period SPEI is aggregated. 6-months is standard but could change if want. 
@@ -204,7 +205,7 @@ ggsave("Annual-bar-SPEI-CF2-gridmet.png", path = FigDir, width = PlotWidth, heig
 
 
 # Split into periods
-drt3<-subset(drt3, Year <=2012)
+drt3<-subset(drt3, Year >=1981 & Year <=2010)
 min(drt3$SPEI)
 
 Future.drt<-subset(all3, Year >= Yr-Range/2 & Year <= Yr+Range/2)
@@ -345,6 +346,7 @@ Hist_char$Frequency<-mean(HistoricalDrought$freq,na.rm=TRUE)
 Hist_char$Duration<-mean(HistoricalDrought$duration)
 Hist_char$Severity<-mean(HistoricalDrought$severity)
 Hist_char$Intensity<-mean(HistoricalDrought$peak)
+Hist_char$Drt.Free <- mean(rle(drt3$length)$lengths[which(rle(drt3$length)$values==0)])
 
 
 Drought_char<-setNames(data.frame(matrix(ncol=6,nrow=length(levels(FutureDrought$CF)))),c("CF","per","Duration","Severity","Intensity","Frequency"))
@@ -356,6 +358,7 @@ for (i in 1:length(Drought_char$CF)){
   Drought_char$Duration[i]<-mean(FutureDrought$duration[which(FutureDrought$CF == name)])
   Drought_char$Severity[i]<-mean(FutureDrought$severity[which(FutureDrought$CF == name)])
   Drought_char$Intensity[i]<-mean(FutureDrought$peak[which(FutureDrought$CF == name)])
+  Drought_char$Drt.Free[i]<-mean(rle(subset(Future.drt,CF==name)$length)$lengths[which(rle(subset(Future.drt,CF==name)$length)$values==0)])
 }
 
 Drought_char<-rbind(Hist_char,Drought_char) 
@@ -389,7 +392,7 @@ var_bar_plot(Drought_all,"Intensity", colors3, "Average Drought Intensity",
 ggsave("Bar-DroughtIntensity.png", path = FigDir, height=PlotHeight, width=PlotWidth)
 
 #Drought-free interval barplot
-var_bar_plot(Drought_all,"Frequency", colors3, "Average Drought-Free Interval", 
+var_bar_plot(Drought_all,"Drt.Free", colors3, "Average Drought-Free Interval", 
              "Years")
 ggsave("Bar-DroughtFrequency.png", path = FigDir, height=PlotHeight, width=PlotWidth)
 
@@ -402,7 +405,7 @@ b <- SPEI_annual_bar(CF2, period.box=T,
                      title=GCMs[2])
 
 c <- var_bar_plot(Drought_all,"Duration", colors3, "Duration", "Years")
-d <- var_bar_plot(Drought_all,"Frequency", colors3, "Return interval", 
+d <- var_bar_plot(Drought_all,"Drt.Free", colors3, "Drought-free\ninterval", 
                   "Years")
 e<- var_bar_plot(Drought_all,"Severity", colors3, "Severity", 
                  "Severity (Intensity * Duration)")
@@ -416,7 +419,7 @@ drt.char <- grid.arrange(c+rremove("x.text"),d+rremove("x.text"),e,nrow=3,
                          top = textGrob("Average drought characteristics",gp=gpar(fontface="bold", col="black", fontsize=26,hjust=0.5)))
 
 g <- grid.arrange(spei.time, drt.char,ncol = 2, clip = FALSE)
-ggsave("Panel-DroughtCharacteristics-1.png",g, path = FigDir, height=PanelHeight, width=PanelWidth)
+ggsave("Panel-DroughtCharacteristics-1.png",g, path = plotDir, height=PanelHeight, width=PanelWidth)
 
 
 # Option 2
@@ -428,4 +431,4 @@ drt.char <-grid_arrange_shared_legend(c+ rremove("x.text"),d+ rremove("x.text"),
                                       ncol=3,nrow=1,position="bottom",
                                       top = textGrob("Average drought characteristics",gp=gpar(fontface="bold", col="black", fontsize=26,hjust=0.5)))
 g <- grid.arrange(spei.time, drt.char,nrow=2,ncol = 1, clip = FALSE)
-ggsave("Panel-DroughtCharacteristics-2.png",g, path = FigDir, height=PanelHeight, width=PanelWidth)   
+ggsave("Panel-DroughtCharacteristics-2.png",g, path = plotDir, height=PanelHeight, width=PanelWidth)   
