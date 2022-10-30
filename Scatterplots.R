@@ -8,10 +8,8 @@ library(reshape2)
 rm(list=ls())
 
 ######### INITIALS #########
-
-##Color schemes
-
-##Plot parameters
+plotDir <- "C:/Users/achildress/DOI/NPS-NRSS-CCRP-FC Science Adaptation - Documents/General/TARs/GRCA_Climate_Report/GRCA_report_proper/Revised_Figs_ACR/" # AKD PlotDir
+data.dir <- "C:/Users/achildress/DOI/NPS-NRSS-CCRP-FC Science Adaptation - Documents/General/TARs/GRCA_Climate_Report/GRCA Repo Data/"
 
 #Height and width 
 PlotWidth = 15
@@ -52,7 +50,7 @@ df$RCP = factor(df$RCP,levels = unique(df$RCP))
 
 head(df)
 Longx<- "annual average temperature (F)"
-Longy<- "DJF precipitation (in)"
+Longy<- "winter (DJF) precipitation (in)"
 x <- "TmeanF"
 y <- "PrcpIn_DJF"
 
@@ -100,7 +98,7 @@ dualscatter  + geom_text_repel(aes(label=GCM)) +
 # scale_shape_manual(name="Emissions",values=c(17,19)) +
 # scale_fill_manual(name="Emissions",values = col.RCP2) +
 
-ggsave(paste0(DataDir,"GGCL-Scatter-modelSelect.png"), width = 15, height = 9)
+ggsave(paste0(plotDir,"GGCL-Scatter-modelSelect.png"), width = 15, height = 9)
 
 
 
