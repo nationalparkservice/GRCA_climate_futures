@@ -6,6 +6,7 @@
 # Run linear regression analysis by pixel
 # Units for raw data: temps in Celsius, precip in mm
 
+
 library(sf)
 library(sp)
 library(dplyr)
@@ -16,6 +17,8 @@ library(grid)
 library(reshape2)
 library(zoo)
 library(cowplot)
+library(gridExtra)
+library(ggpubr)
 
 rm(list = ls())
 
@@ -24,208 +27,210 @@ rm(list = ls())
 data.dir <- "D:/NOAA-nClimGrid" 
 pnt.list<-list.files(path=data.dir, pattern=".prcp.conus") #list all files by var
 #tmax, tmin, tave, prcp
-
-var <- "prcp"
-
-plotDir <- "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output_corrected/maps-figs/" # AKD PlotDir
-
-
-# ---   INITIALS  ---------------------------------------- #
-nps_boundary <- st_read("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GIS\\nps_boundary\\nps_boundary.shp") # Directory Annie comp
+# 
+# var <- "prcp"
+# 
+plotDir <- "C:/Users/achildress/DOI/NPS-NRSS-CCRP-FC Science Adaptation - Documents/General/TARs/GRCA_Climate_Report/GRCA_report_proper/Revised_Figs_ACR/" # AKD PlotDir
+data.dir <- "C:/Users/achildress/DOI/NPS-NRSS-CCRP-FC Science Adaptation - Documents/General/TARs/GRCA_Climate_Report/GRCA Repo Data/"
+# 
+# 
+# # ---   INITIALS  ---------------------------------------- #
+# nps_boundary <- st_read(paste0(data.dir,"Park GIS Data/nps_boundary/nps_boundary.shp")) # Directory Annie comp
 site = "GRCA"
-park <- filter(nps_boundary, UNIT_CODE == site) # subset to GRCA only
-Sp_park <- as_Spatial(park) # park <- st_transform(park, st_crs(epsg))
-
-
-# Read in climate divisions shp
-
-GGCL <- st_read("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\GRCA_maps\\GIS\\GGCL\\GGCL.shp") # greater grand canyon landscape
-GGCL <- st_transform(GGCL, crs(Sp_park)) # CONUS Albers
-
-# read in parks shapefile
-#nps_boundary <- st_read('C:/Users/achildress/OneDrive - DOI/Documents/GIS/nps_boundary2018/nps_boundary.shp') #Directory Amber comp
-
-
-
-Sp_ggcl <- as_Spatial(GGCL)
-
-
-bbox<-data.frame(Sp_ggcl@bbox) # get bounding box
-
-#out <- './output' 
-#if(dir.exists(out) == FALSE){
-#  dir.create(out)
-#}
-#
-#maps <- './output/maps' 
-#if(dir.exists(maps) == FALSE){
-#  dir.create(maps)
-#}
-#
-#ras <- './output/rasters' 
-#if(dir.exists(ras) == FALSE){
-#  dir.create(ras)
-#}
-
- #----  CREATE RASTER STACKS  ----------------------------- #
-
-# Create list of tables
-tables <- list()
-for(i in 1:length(pnt.list)){
-  t = read.table(paste(data.dir, pnt.list[i], sep = '/'))
-  colnames(t) = c("Lat","Lon", var)
-  tt = subset(t, Lat >= bbox["y","min"]-0.05 & Lat <= bbox["y","max"]+0.05 &
-                Lon >=bbox["x","min"]-0.05 & Lon<=bbox["x","max"]+0.05)
-  tables[[i]] = tt 
-}
-
-# Create raster list
-
-rasters <- list()
-
-for(i in 1:length(tables)) {
-  df <- tables[[i]]
-  coordinates(df) = ~Lon+Lat
-  proj4string(df) = "+proj=longlat +datum=WGS84 +no_defs " #same proj4string used in NPS_boundary_centroids.shp
-  df = spTransform(df, CRSobj = "+init=epsg:4326") #reproj sp obj
-  y = data.frame(df@coords)
-  y$var<-df@data
-  df = as.matrix(y)
-  e = extent(df[,1:2])
-  r =  raster(e,ncol=length(unique(df[,1])), nrow=length(unique(df[,2]))) # this needs to be updated for the GGCL. Not sure where these numbers come from. 
-  x = rasterize(df[, 1:2], r, df[,3])
-  rasters[[i]] <- x
-}
-
-st <- readRDS("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\nClimGrid\\prcp_stack.Rds")
-
-#st <- stack(rasters) # Create raster stack
-plot(st[[1]])
-
-index <- rep(1:96, each = 12)
-
-# Summarize by year
-
-###############################
-##### Run for only tempvar
-# Calculate annual means: output = rasterstack with 1 layer per year
-  
-st_mean <- stackApply(st, indices = c(rep(1:(nlayers(st)/12), each = 12)), fun = mean, na.rm = TRUE) # get annual mean first
-plot(st_mean[[1]])
-writeRaster(st_mean, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/tmax/st_mean.tif", format = "GTiff")
-
-st_fahr <- calc(st_mean, fun = function(x){x*9/5 + 32}) # then convert to Fahrenheit
-plot(st_fahr)
-writeRaster(st_fahr, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/tmax/st_fahr.tif", format = "GTiff")
-
-# Calculate overall mean: output = single raster with overall mean values
-
-ras_mean <- calc(st_fahr, fun = mean)
-plot(ras_mean)
-plot(Sp_ggcl, add = TRUE)
-writeRaster(ras_mean, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/tmax/ras_mean.tif", format = "GTiff")
-
-##################################
-
+# park <- filter(nps_boundary, UNIT_CODE == site) # subset to GRCA only
+# Sp_park <- as_Spatial(park) # park <- st_transform(park, st_crs(epsg))
+# 
+# 
+# # Read in climate divisions shp
+# 
+# GGCL <- st_read(paste0(data.dir,"GRCA_maps/GIS/GGCL/GGCL.shp")) # greater grand canyon landscape
+# GGCL <- st_transform(GGCL, crs(Sp_park)) # CONUS Albers
+# 
+# # read in parks shapefile
+# #nps_boundary <- st_read('C:/Users/achildress/OneDrive - DOI/Documents/GIS/nps_boundary2018/nps_boundary.shp') #Directory Amber comp
+# 
+# 
+# 
+# Sp_ggcl <- as_Spatial(GGCL)
+# 
+# 
+# bbox<-data.frame(Sp_ggcl@bbox) # get bounding box
+# 
+# #out <- './output' 
+# #if(dir.exists(out) == FALSE){
+# #  dir.create(out)
+# #}
+# #
+# #maps <- './output/maps' 
+# #if(dir.exists(maps) == FALSE){
+# #  dir.create(maps)
+# #}
+# #
+# #ras <- './output/rasters' 
+# #if(dir.exists(ras) == FALSE){
+# #  dir.create(ras)
+# #}
+# 
+# ##### ONLY NEED TO DO THIS THE FIRST TIME -- SUBSEQUENT TIMES REFER TO .RDS FILES
+# #  #----  CREATE RASTER STACKS  ----------------------------- #
+# # 
+# # # Create list of tables
+# # tables <- list()
+# # for(i in 1:length(pnt.list)){
+# #   t = read.table(paste(data.dir, pnt.list[i], sep = '/'))
+# #   colnames(t) = c("Lat","Lon", var)
+# #   tt = subset(t, Lat >= bbox["y","min"]-0.05 & Lat <= bbox["y","max"]+0.05 &
+# #                 Lon >=bbox["x","min"]-0.05 & Lon<=bbox["x","max"]+0.05)
+# #   tables[[i]] = tt 
+# # }
+# # 
+# # # Create raster list
+# # 
+# # rasters <- list()
+# # 
+# # for(i in 1:length(tables)) {
+# #   df <- tables[[i]]
+# #   coordinates(df) = ~Lon+Lat
+# #   proj4string(df) = "+proj=longlat +datum=WGS84 +no_defs " #same proj4string used in NPS_boundary_centroids.shp
+# #   df = spTransform(df, CRSobj = "+init=epsg:4326") #reproj sp obj
+# #   y = data.frame(df@coords)
+# #   y$var<-df@data
+# #   df = as.matrix(y)
+# #   e = extent(df[,1:2])
+# #   r =  raster(e,ncol=length(unique(df[,1])), nrow=length(unique(df[,2]))) # this needs to be updated for the GGCL. Not sure where these numbers come from. 
+# #   x = rasterize(df[, 1:2], r, df[,3])
+# #   rasters[[i]] <- x
+# # }
+# 
+# st <- readRDS(paste0(data.dir,"nClimGrid/prcp_stack.Rds"))
+# 
+# #st <- stack(rasters) # Create raster stack
+# plot(st[[1]])
+# 
+# index <- rep(1:96, each = 12)
+# 
+# # Summarize by year
+# 
 # ###############################
-# ##### Run for only precip
-st_sum <- stackApply(st, indices = c(rep(1:(nlayers(st)/12), each = 12)), fun = sum, na.rm = TRUE) # get total annual precip
-plot(st_sum[[1]]) #
-writeRaster(st_sum, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/prcp_mean.tif", format = "GTiff")
-
+# ##### Run for only tempvar
+# # Calculate annual means: output = rasterstack with 1 layer per year
+#   
+# st_mean <- stackApply(st, indices = c(rep(1:(nlayers(st)/12), each = 12)), fun = mean, na.rm = TRUE) # get annual mean first
+# plot(st_mean[[1]])
+# writeRaster(st_mean, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/tmax/st_mean.tif", format = "GTiff")
 # 
- st_mean_pr_tot <- calc(st_sum, fun = mean)
- plot(st_mean_pr_tot)
- writeRaster(st_mean_pr_tot, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/st_mean_pr_tot.tif", format = "GTiff")
+# st_fahr <- calc(st_mean, fun = function(x){x*9/5 + 32}) # then convert to Fahrenheit
+# plot(st_fahr)
+# writeRaster(st_fahr, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/tmax/st_fahr.tif", format = "GTiff")
 # 
-st_in <- calc(st_sum, fun = function(x){((x)/25.4)})
-plot(st_in)
-writeRaster(st_in, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/st_in.tif", format = "GTiff")
-
-
-# Calculate overall mean: output = single raster with overall mean values
-
- ras_mean <- calc(st_in, fun = mean)
- plot(ras_mean)
- 
- writeRaster(ras_mean, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/ras_mean.tif", format = "GTiff")
- 
-#######################
-
-# ------  REGRESSION  -------------------------------------------------- #
-
-time <- 1:nlayers(st_in) # all years 1895 - 2020
-
-# Function to calculate slope and p-value
-
-fun <- function(y) {
-  if(all(is.na(y))) {
-    c(NA, NA)
-  } else {
-    m = lm(y ~ time) 
-    s = summary(m)
-    slope = s$coefficients[2] * 10 # change per 10 years
-    pval =  pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3],lower.tail = FALSE)
-    cbind(slope, pval)
-  }
-}
-
-r <- calc(st_in, fun)
-plot(r)
-
-# -- PLOTTING ---------------------------------------------------------- #
-
-# Reclassify raster so that values <= 0.05 -> 1 or else NA
-slope <- subset(r, 1)
-
-pval <- subset(r, 2)
-pval[pval > 0.05] <- NA # Make values NA that are greater than 0.05
-
-sig <- mask(slope, pval)
-
-plot(sig)
-
-# Plot park over raster
-#Sp_ggcl<-spTransform(Sp_ggcl,CRSobj = "+init=epsg:5070") # project to Conus Albers
-plot(Sp_ggcl, add = TRUE)
-
-
-writeRaster(sig, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/prcp_delta.tif", format = "GTiff") # save raster of significant slope values
-#writeRaster(sig, file = paste(plotDir,"/Rasters/tmean_delta.tif",sep=""),overwrite=TRUE) # save raster of significant slope values
-
-# -- TIME SERIES REGRESSION ---------------------------------------------- #
-# create dfs from rasters -- run parsing script, create dataframe from cell avgs, save
-
-yr<-seq(1895,2020,1)
-
-#remove 1956 due to error
-yr <- yr[yr != 1956]
-
-Sp_ggcl<-spTransform(Sp_ggcl,CRSobj = "+init=epsg:4326") # project to Alaska Albers
-
-
-# Precip 
-
-m_pr <- mask(st_in, Sp_ggcl)
-plot(m_pr)
-
-pr<-data.frame(prcp=cellStats(m_pr,stat='mean'),year=yr)
-row.names(pr)<-NULL
-write.csv(pr,"C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/prcp.csv",row.names=F)
-
-
-m_temp_park <- mask(st_fahr,Sp_park)
-
-# Temp
-m_fahr <- mask(st_fahr, Sp_ggcl)
-plot(m_fahr)
-
-fahr<-data.frame(tave=cellStats(st_fahr,stat='mean'),year=yr)
-row.names(fahr)<-NULL
-write.csv(fahr,"C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/tmax/tmax.csv",row.names=F)
-
-
-m_temp_park <- mask(st_fahr,Sp_park)
+# # Calculate overall mean: output = single raster with overall mean values
+# 
+# ras_mean <- calc(st_fahr, fun = mean)
+# plot(ras_mean)
+# plot(Sp_ggcl, add = TRUE)
+# writeRaster(ras_mean, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/tmax/ras_mean.tif", format = "GTiff")
+# 
+# ##################################
+# 
+# # ###############################
+# # ##### Run for only precip
+# st_sum <- stackApply(st, indices = c(rep(1:(nlayers(st)/12), each = 12)), fun = sum, na.rm = TRUE) # get total annual precip
+# plot(st_sum[[1]]) #
+# writeRaster(st_sum, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/prcp_mean.tif", format = "GTiff")
+# 
+# # 
+#  st_mean_pr_tot <- calc(st_sum, fun = mean)
+#  plot(st_mean_pr_tot)
+#  writeRaster(st_mean_pr_tot, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/st_mean_pr_tot.tif", format = "GTiff")
+# # 
+# st_in <- calc(st_sum, fun = function(x){((x)/25.4)})
+# plot(st_in)
+# writeRaster(st_in, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/st_in.tif", format = "GTiff")
+# 
+# 
+# # Calculate overall mean: output = single raster with overall mean values
+# 
+#  ras_mean <- calc(st_in, fun = mean)
+#  plot(ras_mean)
+#  
+#  writeRaster(ras_mean, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/ras_mean.tif", format = "GTiff")
+#  
+# #######################
+# 
+# # ------  REGRESSION  -------------------------------------------------- #
+# 
+# time <- 1:nlayers(st_in) # all years 1895 - 2020
+# 
+# # Function to calculate slope and p-value
+# 
+# fun <- function(y) {
+#   if(all(is.na(y))) {
+#     c(NA, NA)
+#   } else {
+#     m = lm(y ~ time) 
+#     s = summary(m)
+#     slope = s$coefficients[2] * 10 # change per 10 years
+#     pval =  pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3],lower.tail = FALSE)
+#     cbind(slope, pval)
+#   }
+# }
+# 
+# r <- calc(st_in, fun)
+# plot(r)
+# 
+# # -- PLOTTING ---------------------------------------------------------- #
+# 
+# # Reclassify raster so that values <= 0.05 -> 1 or else NA
+# slope <- subset(r, 1)
+# 
+# pval <- subset(r, 2)
+# pval[pval > 0.05] <- NA # Make values NA that are greater than 0.05
+# 
+# sig <- mask(slope, pval)
+# 
+# plot(sig)
+# 
+# # Plot park over raster
+# #Sp_ggcl<-spTransform(Sp_ggcl,CRSobj = "+init=epsg:5070") # project to Conus Albers
+# plot(Sp_ggcl, add = TRUE)
+# 
+# 
+# writeRaster(sig, "C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/prcp_delta.tif", format = "GTiff") # save raster of significant slope values
+# #writeRaster(sig, file = paste(plotDir,"/Rasters/tmean_delta.tif",sep=""),overwrite=TRUE) # save raster of significant slope values
+# 
+# # -- TIME SERIES REGRESSION ---------------------------------------------- #
+# # create dfs from rasters -- run parsing script, create dataframe from cell avgs, save
+# 
+# yr<-seq(1895,2020,1)
+# 
+# #remove 1956 due to error
+# yr <- yr[yr != 1956]
+# 
+# Sp_ggcl<-spTransform(Sp_ggcl,CRSobj = "+init=epsg:4326") # project to Alaska Albers
+# 
+# 
+# # Precip 
+# 
+# m_pr <- mask(st_in, Sp_ggcl)
+# plot(m_pr)
+# 
+# pr<-data.frame(prcp=cellStats(m_pr,stat='mean'),year=yr)
+# row.names(pr)<-NULL
+# write.csv(pr,"C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/prcp/prcp.csv",row.names=F)
+# 
+# 
+# m_temp_park <- mask(st_fahr,Sp_park)
+# 
+# # Temp
+# m_fahr <- mask(st_fahr, Sp_ggcl)
+# plot(m_fahr)
+# 
+# fahr<-data.frame(tave=cellStats(st_fahr,stat='mean'),year=yr)
+# row.names(fahr)<-NULL
+# write.csv(fahr,"C:/Users/gknowlton/OneDrive - DOI/Documents/GRCA/nClimGrid/output/tmax/tmax.csv",row.names=F)
+# 
+# 
+# m_temp_park <- mask(st_fahr,Sp_park)
 
 # Write csv's
 
@@ -250,10 +255,10 @@ m_temp_park <- mask(st_fahr,Sp_park)
 # ---  PLOTS ----------------------------------------- #      
 
 # read in csvs
-prcp<-read.csv("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\nClimGrid\\output_corrected\\prcp\\prcp.csv")
-tmax<-read.csv("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\nClimGrid\\output_corrected\\tmax\\tmax.csv")
-tmin<-read.csv("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\nClimGrid\\output_corrected\\tmin\\tmin.csv")
-tave<-read.csv("C:\\Users\\gknowlton\\OneDrive - DOI\\Documents\\GRCA\\nClimGrid\\output_corrected\\tave\\tave.csv")
+prcp<-read.csv(paste0(data.dir,"nClimGrid/output_corrected/prcp/prcp.csv"))
+tmax<-read.csv(paste0(data.dir,"nClimGrid/output_corrected/tmax/tmax.csv"))
+tmin<-read.csv(paste0(data.dir,"nClimGrid/output_corrected/tmin/tmin.csv"))
+tave<-read.csv(paste0(data.dir,"nClimGrid/output_corrected/tave/tave.csv"))
 
 # -- TIME SERIES FROM PRISM SCRIPTS
 beginRefYr = 1895
@@ -297,7 +302,7 @@ length(prcp$prcp)
 #add NA column to tave
 new.row <- data.frame(tave = NA, year = 1956, stringsAsFactors = F)
 as.integer(new.row$year)
-tave <- rbind.fill(tave, new.row)
+tave <- plyr::rbind.fill(tave, new.row)
 as.integer(tave$year)
 
 #rename column issue (all temp variables called in as prcp for some reason)
@@ -313,10 +318,10 @@ as.integer(tave$year)
 #prcp
 
 # data from 1956 missing, remove rows from other data frames to make equal lengths
-
-#tmin <- subset(tmin, year != 1956)
-#tmax <- subset(tmax, year != 1956)
-#prcp <- subset(prcp, year != 1956)
+# 
+# tmin <- subset(tmin, year != 1956)
+# tmax <- subset(tmax, year != 1956)
+# prcp <- subset(prcp, year != 1956)
 
 
 cYr <- BeginYr:EndYr
@@ -345,54 +350,6 @@ yrAvgs <- merge(rDat, yrAvgs, all=TRUE)
 PlotName <- "10-yr Running Means"
 
 #Colors for running means
-RMColors = scale_color_manual(name="", values=c("brown", "black", "#3366FF"))
-
-a <- ggplot(aes(x=cYr), data=yrAvgs) + 
-  geom_line(aes(y=tmax, group=1, col="Annual means"), na.rm=TRUE) + 
-  geom_point(aes(y=tmax, col="Annual means"), na.rm=TRUE) +
-  ylab(expression(paste(Tmax, ~({}^o*F)))) + xlab("") +
-  # geom_text(aes(x=1895, y=29, label="A")) +
-  geom_smooth(method="lm", aes(y=tmax, group=2, col="Regression trend"), na.rm=TRUE)+ 
-  geom_line(aes(y=rTmax, group=3, col=paste(rollLen, "-yr running mean", sep="")), size=1.5, na.rm=TRUE) +
-  RMColors +
-  scale_x_continuous(breaks=c(1930, 1950, 1970, 1990, 2010))
-a
-
-b <- ggplot(aes(cYr, tmin), data=yrAvgs) + geom_line(na.rm=TRUE) + geom_point(na.rm=TRUE) +
-  ylab(expression(paste(Tmin, ~({}^o*F)))) + xlab("") +
-  # geom_text(aes(x=1895, y= 13.5, label = "B")) +
-  geom_smooth(method="lm", na.rm=TRUE)+
-  geom_line(aes(cYr, rTmin), size=1.5, colour="brown", na.rm=TRUE) + 
-  scale_x_continuous(breaks=c(1930, 1950, 1970, 1990, 2010))
-
-c <- ggplot(aes(cYr, tave), data=yrAvgs) + geom_line(na.rm=TRUE) + geom_point(na.rm=TRUE) +
-  ylab(expression(paste(Tavg, ~({}^o*F)))) + xlab("") +
-  # geom_text(aes(x=1895, y= 13.5, label = "B")) +
-  geom_smooth(method="lm", na.rm=TRUE)+
-  geom_line(aes(cYr, rTmean), size=1.5, colour="brown", na.rm=TRUE) +
-  scale_x_continuous(breaks=c(1930, 1950, 1970, 1990, 2010))
-
-d <- ggplot(aes(cYr, prcp), data=yrAvgs) + geom_line(na.rm=TRUE) + geom_point(na.rm=TRUE) +
-  ylab("Precip (in/yr)") + xlab("") +
-  # geom_text(aes(x=1895, y=350, label = "C")) +
-  geom_smooth(method="lm", na.rm=TRUE)+
-  geom_line(aes(cYr, rPpt), size=1.5, colour="brown", na.rm=TRUE) + 
-  scale_x_continuous(breaks=c(1930, 1950, 1970, 1990, 2010))
-
-p1 = plot_grid(a, b, c, d, nrow=4, align="v")
-title = ggdraw() + draw_label(paste(site, " - Annual Means and Trends", sep=""), 
-                              fontface="bold", size=TitleSize, vjust=0.5)
-legend = get_legend(a + theme(legend.position = "bottom"))
-p2 = plot_grid(title, p1, legend, ncol=1, rel_heights=c(0.05, 1, .05))
-p3 = add_sub(p2, paste("Gray shaded area around regression lines = standard error of predicted y's \nData range = ", BeginYr, "-", EndYr, sep=""), 
-             y=0.5, hjust=0.5, vjust=0.5, size=12)
-ggdraw(p3)
-
-OFName = paste(plotDir, PlotName, " ", site, ".png", sep = "")
-ggsave(OFName, width=6.5, height=8.5, dpi=dpi)
-
-##########################
-
 ######################  Periods of Analysis  ######################
 
 p1_start  = beginRefYr
@@ -485,8 +442,8 @@ colnames(lmTable) <- c("Var", "Period", "YrCoeff(degF(in)/100yrs)", "seSlope", "
 
 print(lmTable, row.names = F)
 
-write.csv(lmTable, paste(plotDir, site, " Regression Table test ", Sys.Date(), ".csv", 
-                         sep=""), row.names=FALSE)
+# write.csv(lmTable, paste(plotDir, site, " Regression Table test ", Sys.Date(), ".csv", 
+#                          sep=""), row.names=FALSE)
 
 
 #-----------------------------------------------------------#
@@ -508,8 +465,8 @@ a <- ggplot(yrAvgs) +	geom_smooth(method = lm, aes(cYr, tmax), na.rm=TRUE,linety
 } else{2}) +
   geom_line(aes(cYr, tmax), na.rm=TRUE) + geom_point(aes(cYr, tmax), na.rm=TRUE) +
   ylab(expression(paste(Tmax, ~({}^o*F)))) + xlab("") +
-  scale_x_continuous(breaks=c(1930, 1950, 1970, 1990, 2010)) +
-  geom_line(aes(cYr, rTmax), colour = 'brown', size=1)  # rolling mean
+  scale_x_continuous(breaks=c(1930, 1950, 1970, 1990, 2010)) 
+  # geom_line(aes(cYr, rTmax), colour = 'brown', size=1)  # rolling mean
 if(doP1 == "YES")a <- a + geom_smooth(method = lm, aes(cYr, tmaxP1), na.rm=TRUE,linetype=if(summary(lmTmaxP1)$coefficients[2,4]<0.1) {
   1
 } else{2})
@@ -524,8 +481,8 @@ b <- ggplot(data=yrAvgs) + geom_line(aes(cYr, tmin), na.rm=TRUE) + geom_point(ae
   geom_smooth(aes(cYr, tmin), method="lm", na.rm=TRUE,linetype=if(summary(lmTmin)$coefficients[2,4]<0.1) {
     1
   } else{2}) +
-  scale_x_continuous(breaks=c(1930, 1950, 1970, 1990, 2010)) +
-  geom_line(aes(cYr, rTmin), colour = 'brown', size=1)
+  scale_x_continuous(breaks=c(1930, 1950, 1970, 1990, 2010)) 
+  # geom_line(aes(cYr, rTmin), colour = 'brown', size=1)
 
 if(doP1 == "YES")b <- b +	geom_smooth(method = lm, aes(cYr, tminP1), na.rm=TRUE,linetype=if(summary(lmTminP1)$coefficients[2,4]<0.1) {
   1
@@ -536,12 +493,12 @@ if(doP2 == "YES")b <- b +	geom_smooth(method = lm, aes(cYr, tminP2), na.rm=TRUE,
 b
 
 c <- ggplot(data=yrAvgs) + geom_line(aes(cYr, tave), na.rm=TRUE) + geom_point(aes(cYr, tave), na.rm=TRUE) +
-  ylab(expression(paste(Tavg, ~({}^o*F)))) + xlab("") +
+  ylab(expression(paste(Tmean, ~({}^o*F)))) + xlab("") +
   # geom_text(aes(x=1895, y= 13.5, label = "B")) +
   geom_smooth(aes(cYr, tave), method="lm", na.rm=TRUE,linetype=if(summary(lmTmean)$coefficients[2,4]<0.1) {
     1
   } else{2}) +
-  geom_line(aes(cYr, rTmean), colour = 'brown', size=1) +
+  # geom_line(aes(cYr, rTmean), colour = 'brown', size=1) +
   scale_x_continuous(breaks=c(1930, 1950, 1970, 1990, 2010))
 
 if(doP1 == "YES")c <- c + geom_smooth(method = lm, aes(cYr, taveP1), na.rm=TRUE,linetype=if(summary(lmTmeanP1)$coefficients[2,4]<0.1) {
@@ -557,7 +514,7 @@ d <- ggplot(data=yrAvgs) + geom_line(aes(cYr, prcp), na.rm=TRUE) + geom_point(ae
   geom_smooth(aes(cYr, prcp), method="lm", na.rm=TRUE,linetype=if(summary(lmPpt)$coefficients[2,4]<0.1) {
     1
   } else{2}) +
-  geom_line(aes(cYr, rPpt), colour = 'brown', size=1) +
+  # geom_line(aes(cYr, rPpt), colour = 'brown', size=1) +
   scale_x_continuous(breaks=c(1930, 1950, 1970, 1990, 2010))
 
 if(doP1 == "YES")d <- d + geom_smooth(method = lm, aes(cYr, prcpP1), na.rm=TRUE,linetype=if(summary(lmPptP1)$coefficients[2,4]<0.1) {
@@ -567,37 +524,12 @@ if(doP2 == "YES")d <- d + geom_smooth(method = lm, aes(cYr, prcpP2), na.rm=TRUE,
   1
 } else{2}) 
 
-rm(lmPpt,lmPptP1,lmPptP2,lmTmax,lmTmaxP1,lmTmaxP2,lmTmin,lmTminP1,lmTminP2,lmTmean,lmTmeanP1,lmTmeanP2)
-rm(regsTmax, regsTmin, regsTmean, regsPpt, lmTable)
 
-#4-panel plot		
-p1 = plot_grid(a, b, c, d, nrow=4, align="v")
-title = ggdraw() + draw_label(paste(site, " - Trends for Reference and Recent \nHistorical Periods", sep=""), 
-                              fontface="bold", size=TitleSize, vjust=0.5)
-p2 = plot_grid(title, p1, ncol=1, rel_heights = c(0.07, 1)) 
-p3 = add_sub(p2, paste("Gray shaded area around regression lines = standard error of predicted y's \nReference period: ", beginRefYr, "-", endRefYr, "; Recent period: ", endRefYr+1, "-", EndYr, "; Overall period: ", BeginYr, "-", EndYr, sep=""),
-             y=.5, hjust=0.5, vjust=0.5, size=12)
-ggdraw(p3)
+#tmean, tmax, tmin		
+g <- grid.arrange(c, a,b,nrow=3)
+ggsave(plot=g,paste0(plotDir,"TS-Tmean-Tmax-Tmin-regression.png"), width=6.5, height=6.5, dpi=dpi,bg="white")
 
-OFName <- paste(plotDir, PlotName, " 4-panel ", site,".png", sep = "")
-ggsave(OFName, width=6.5, height=8.5, dpi=dpi)
+#prcp
+g <- grid.arrange(d,nrow=1)
+ggsave(plot=g,paste0(plotDir,"TS-Precip-regression.png"), width=6.5, height=2.9, dpi=dpi,bg="white")
 
-#2-panel Tmax/Tmin plot
-p1 = plot_grid(a, b, nrow=2, align="v")
-p2 = plot_grid(title, p1, ncol=1, rel_heights = c(0.1, 1, 0.05)) 
-p3 = add_sub(p2, paste("Gray shaded area around regression lines = standard error of predicted y's \nReference period: ", beginRefYr, "-", endRefYr, "; Recent period: ", endRefYr+1, "-", EndYr, "; Overall period: ", BeginYr, "-", EndYr, sep=""),
-             y=.5, hjust=0.5, vjust=0.5, size=12)
-ggdraw(p3)
-
-OFName <- paste(plotDir,PlotName, " Tmin Tmax ", site, ".png", sep = "")
-ggsave(OFName, width=6.5, height=6.5, dpi=dpi)
-
-#2-panel Tmean/Precip plot
-p1 = plot_grid(c, d, nrow=2, align="v")
-p2 = plot_grid(title, p1, ncol=1, rel_heights = c(0.1, 1, 0.05)) 
-p3 = add_sub(p2, paste("Gray shaded area around regression lines = standard error of predicted y's \nReference period: ", beginRefYr, "-", endRefYr, "; Recent period: ", endRefYr+1, "-", EndYr, "; Overall period: ", BeginYr, "-", EndYr, sep=""),
-             y=.5, hjust=0.5, vjust=0.5, size=12)
-ggdraw(p3)
-
-OFName <- paste(plotDir, PlotName, " Tmean Precip ", site, ".png", sep = "")
-ggsave(OFName, width=6.5, height=6.5, dpi=dpi)
