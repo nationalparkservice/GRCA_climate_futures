@@ -366,7 +366,7 @@ Tmean_heatmap <- ggplot(Tave_ch_all, aes(x=factor(season, level = c('Annual', 'S
   geom_text(size=6,aes(label=round(change_dec,2))) +
   scale_fill_distiller(name= "Decadal change\nin temperature (\u00B0F)", direction=1,palette = "YlOrRd", limits=c(round(scale.min,2),round(scale.max,2))) +
   theme_bw(base_size=14) +
-  labs(title = "Average temperature (\u00B0F)",
+  labs(title = "Mean temperature (\u00B0F)",
        x = "",
        y = "Elevation (ft)") +
   theme(plot.title = element_text(hjust=0.5),

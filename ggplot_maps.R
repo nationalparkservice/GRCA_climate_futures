@@ -70,7 +70,7 @@ az2 <- projectRaster(az, crs = aa)
 # # plotRGB(ak)
 # az2 <- projectRaster(az, crs = aa) # Alaska Albers 
 # az2<-mask(az2, GGCL)
-# az_df  <- as.data.frame(az2, xy = TRUE) # this step is important to get it to plot in ggplot
+az_df  <- as.data.frame(az2, xy = TRUE) # this step is important to get it to plot in ggplot
 
 
 # basemap <- ggRGB(ak2)
@@ -405,7 +405,7 @@ tmax_mean <- ggplot() + ggRGB(az2,r=1,b=3,g=2, ggLayer = TRUE) +
   geom_sf(data = GGCL, aes(), fill=NA, color = "transparent",lwd=0.5) +
   geom_sf(data = park, aes(), fill=NA, color = "black",lwd=0.5) +
   coord_sf(xlim = c(-1656660, -1310640 ), ylim = c(1452059 , 1746459 ), expand = FALSE) +
-  labs(title = "Change in mean maximum temperature (\u00B0F)") +
+  labs(title = "Change in maximum temperature (\u00B0F)") +
   theme_map() +
   theme(legend.position = "right",
         legend.key.width = unit(.3, "cm"),
@@ -423,7 +423,7 @@ tmin_mean <- ggplot() + ggRGB(az2,r=1,b=3,g=2, ggLayer = TRUE) +
   geom_sf(data = GGCL, aes(), fill=NA, color = "transparent",lwd=0.5) +
   geom_sf(data = park, aes(), fill=NA, color = "black",lwd=0.5) +
   coord_sf(xlim = c(-1656660, -1310640 ), ylim = c(1452059 , 1746459 ), expand = FALSE) +
-  labs(title = "Change in mean minimum temperature (\u00B0F)") +
+  labs(title = "Change in minimum temperature (\u00B0F)") +
   theme_map() +
   theme(legend.position = "right",
         legend.key.width = unit(.3, "cm"),
